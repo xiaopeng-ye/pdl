@@ -1,5 +1,5 @@
 from sly import Lexer
-from sly.lex import Token
+import re
 
 
 # tabla_palabra_reservada = ['alert', 'boolean', 'for', 'function', 'if', 'input', 'le', 'number', 'return', 'string', 'true', 'false']
@@ -60,6 +60,8 @@ class JSLexer(Lexer):
 
     @_(r'\'.*\'')
     def CADENA(self, token):
+        token.value = re.sub(r"\\\'", "'", token.value)
+        token.value = re.sub(r'\\\\', r'\\', token.value)
         token.value = u'"{cadena}"'.format(cadena=token.value.strip("'"))
         return token
 

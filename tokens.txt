@@ -2,13 +2,9 @@
 <STRING, >
 <IDENTIFICADOR, s>
 <PUNTOCOMA, >
-<ARITMETICO, 4>
-<ARITMETICO, 3>
-<IDENTIFICADOR, variable>
-<IDENTIFICADOR, global>
-<IDENTIFICADOR, cadena>
-<ARITMETICO, 3>
-<ARITMETICO, 4>
+<IDENTIFICADOR, s>
+<ASIGNACION, >
+<CADENA, "hello world \n 'hola'' mundo \\\comentario">
 <FUNCTION, >
 <NUMBER, >
 <IDENTIFICADOR, FactorialRecursivo>

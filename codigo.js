@@ -1,5 +1,5 @@
-let string s;	/* variable global cadena */
-
+let string s;
+s = 'hello world \n \'hola\'\' mundo \\\\\\comentario'
 function number FactorialRecursivo (number n)
 {
 	if (n == 0)	return 1;
