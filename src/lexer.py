@@ -1,6 +1,7 @@
 from sly import Lexer
 from sly.lex import Token
 
+
 # tabla_palabra_reservada = ['alert', 'boolean', 'for', 'function', 'if', 'input', 'le', 'number', 'return', 'string', 'true', 'false']
 
 
@@ -16,7 +17,7 @@ class JSLexer(Lexer):
     ignore_comment = r'//.*'
     ignore_newline = r'\n+'
 
-    #ALERT, BOOLEAN, FOR, FUNCTION, IF, INPUT, LET, NUMBER, RETURN, STRING, TRUE, FALSE
+    # ALERT, BOOLEAN, FOR, FUNCTION, IF, INPUT, LET, NUMBER, RETURN, STRING, TRUE, FALSE
 
     # Regular expression rules for tokens, se va a borrar todo
     # ARITMETICO = r'(\+\+)|(\/)|(-)|(\*)|(%)|(\+)'
@@ -52,7 +53,10 @@ class JSLexer(Lexer):
     @_(r'\d+')
     def ENTERO(self, token):
         token.value = int(token.value)
-        return token
+        if -32767 < token.value < 32767:
+            return token
+        else:
+            print('Línea %d: Valor incorrecto, debe corresponder a un número de 16 bits' % self.lineno)
 
     @_(r'\'.*\'')
     def CADENA(self, token):
@@ -61,17 +65,17 @@ class JSLexer(Lexer):
 
     @_(r'\+\+', r'\/', r'-', r'\*', r'%', r'\+')
     def ARITMETICO(self, token):
-        token.value = self.tabla_op_aritmetico.index(token.value)
+        token.value = self.tabla_op_aritmetico.index(token.value) + 1
         return token
 
     @_(r'==', r'!=', r'<=', r'>=', r'<', r'>')
     def RELACIONAL(self, token):
-        token.value = self.tabla_op_relacional.index(token.value)
+        token.value = self.tabla_op_relacional.index(token.value) + 1
         return token
 
     @_(r'(\&\&)', r'(\|\|)', r'(\!)')
     def LOGICO(self, token):
-        token.value = self.tabla_op_logico.index(token.value)
+        token.value = self.tabla_op_logico.index(token.value) + 1
         return token
 
     @_(r'=')
@@ -115,40 +119,28 @@ class JSLexer(Lexer):
         token.value = ''
         return token
 
-    IDENTIFICADOR = r'[a-zA-Z][a-zA-Z0-9_]*'
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def IDENTIFICADOR(self, token):
+        if len(token.value) > 64:
+            print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
+        else:
+            return token
 
     # Line number tracking
     def ignore_newline(self, token):
         self.lineno += token.value.count('\n')
 
     def error(self, token):
-        print('Line %d: Bad character %r' % (self.lineno, token.value[0]))
+        print('Línea %d: Caracter erróneo %r' % (self.lineno, token.value[0]))
         self.index += 1
 
 
-data = '''    
-let string s;	// variable global cadena
-
-function number FactorialRecursivo (number n)	//
-{
-    if (n == 0)	return 1;
-	return n * FactorialRecursivo (n - 1);	//
-}
-
-let number uno = 1;	// la inicialización es de implementación opcional
-let number UNO = uno;
-
-function string salto ()
-{
-    return 'fgds';
-}
-'''
-js_file = open('codigo.txt', 'r')
+js_file = open('codigo.js', 'r')
 token_file = open('tokens.txt', 'w')
 lexer = JSLexer()
 
 for token in lexer.tokenize(js_file.read()):
     token_file.write(f'<{token.type}, {token.value}>\n')
-    #token_file.write('<' + '{},{}'.format(token.type, token.value) + '>\n')
 
 token_file.close()
+js_file.close()
