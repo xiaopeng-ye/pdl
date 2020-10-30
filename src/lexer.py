@@ -1,4 +1,5 @@
 from sly import Lexer
+from table import GestorTablaSimbolo
 import re
 
 
@@ -7,7 +8,8 @@ import re
 
 class JSLexer(Lexer):
 
-    def __init__(self):
+    def __init__(self, gestor_ts):
+        self._gestor_ts = gestor_ts
         self.tabla_op_aritmetico = ['+', '-', '*', '/', '%', '++']
         self.tabla_op_relacional = ['==', '!=', '<', '>', '<=', '>=']
         self.tabla_op_logico = ['&&', '||', '!']
@@ -126,7 +128,13 @@ class JSLexer(Lexer):
         if len(token.value) > 64:
             print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
         else:
-            return token
+            indice = self._gestor_ts.buscar_posicion(token.value) 
+            if indice is None:
+                token.value = self._gestor_ts.insertar_lexema(token.value)
+                
+            else:
+                token.value = indice
+        return token
 
     # Line number tracking
     def ignore_newline(self, token):
@@ -139,10 +147,11 @@ class JSLexer(Lexer):
 
 js_file = open('codigo.js', 'r')
 token_file = open('tokens.txt', 'w')
-lexer = JSLexer()
+ts = GestorTablaSimbolo()
+lexer = JSLexer(ts)
 
 for token in lexer.tokenize(js_file.read()):
-    token_file.write(f'<{token.type}, {token.value}>\n')
+    token_file.write(f'<{token.type},{token.value}>\n')
 
 token_file.close()
 js_file.close()
