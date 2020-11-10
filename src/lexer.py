@@ -3,53 +3,39 @@ from table import GestorTablaSimbolo
 import re
 
 
-# tabla_palabra_reservada = ['alert', 'boolean', 'for', 'function', 'if', 'input', 'le', 'number', 'return', 'string', 'true', 'false']
-
-
 class JSLexer(Lexer):
 
     def __init__(self, gestor_ts):
         self._gestor_ts = gestor_ts
-        self.tabla_op_aritmetico = ['+', '-', '*', '/', '%', '++']
-        self.tabla_op_relacional = ['==', '!=', '<', '>', '<=', '>=']
-        self.tabla_op_logico = ['&&', '||', '!']
+        self.tabla_op_aritmetico = ['+', '-', '++']
+        self.tabla_op_relacional = ['==', '!=']
+        self.tabla_op_logico = ['&&', '||']
+        # tabla_palabra_reservada = ['alert', 'boolean', 'for', 'function', 'if', 'input', 'le', 'number', 'return', 'string', 'true', 'false']
 
     # String containing ignored characters
     ignore = ' \t'
     ignore_comment = r'//.*'
     ignore_newline = r'\n+'
 
-    # ALERT, BOOLEAN, FOR, FUNCTION, IF, INPUT, LET, NUMBER, RETURN, STRING, TRUE, FALSE
-
-    # Regular expression rules for tokens, se va a borrar todo
-    # ARITMETICO = r'(\+\+)|(\/)|(-)|(\*)|(%)|(\+)'
-    # RELACIONAL = r'(==)|(!=)|(<=)|(>=)|(<)|(>)'
-    # ASIGNACION, = r'='
-    # LOGICO = r'(\&\&)|(\|\|)|(\!)'
-    # LLAVEIZQ = r'{'
-    # LLAVEDER = r'}'
-    # PARENTESISIZQ = r'\('
-    # PARENTESISDER = r'\)'
-    # PUNTO_COMA = r';'
-    # COMA = r','
-
-    # # Keywords
-    # IDENTIFICADOR['alert'] = ALERT
-    # IDENTIFICADOR['boolean'] = BOOLEAN
-    # IDENTIFICADOR['for'] = FOR
-    # IDENTIFICADOR['function'] = FUNCTION
-    # IDENTIFICADOR['if'] = IF
-    # IDENTIFICADOR['input'] = INPUT
-    # IDENTIFICADOR['let'] = LET
-    # IDENTIFICADOR['number'] = NUMBER
-    # IDENTIFICADOR['return'] = RETURN
-    # IDENTIFICADOR['string'] = STRING
-    # IDENTIFICADOR['true'] = TRUE
-    # IDENTIFICADOR['false'] = FALSE
+    # Keywords and identificator
+    IDENTIFICADOR = r'[a-zA-Z][a-zA-Z0-9_]*'
+    IDENTIFICADOR['alert'] = ALERT
+    IDENTIFICADOR['boolean'] = BOOLEAN
+    IDENTIFICADOR['for'] = FOR
+    IDENTIFICADOR['function'] = FUNCTION
+    IDENTIFICADOR['if'] = IF
+    IDENTIFICADOR['input'] = INPUT
+    IDENTIFICADOR['let'] = LET
+    IDENTIFICADOR['number'] = NUMBER
+    IDENTIFICADOR['return'] = RETURN
+    IDENTIFICADOR['string'] = STRING
+    IDENTIFICADOR['true'] = TRUE
+    IDENTIFICADOR['false'] = FALSE
 
     # Tokens
     tokens = {IDENTIFICADOR, ENTERO, CADENA, ASIGNACION, ARITMETICO, RELACIONAL, LOGICO, LLAVEIZQ,
-              LLAVEDER, PARENTESISIZQ, PARENTESISDER, PUNTOCOMA, COMA, PALABRA_RESERVADA}
+              LLAVEDER, PARENTESISIZQ, PARENTESISDER, PUNTOCOMA, COMA, ALERT, BOOLEAN, FOR, FUNCTION, IF, INPUT, LET,
+              NUMBER, RETURN, STRING, TRUE, FALSE}
 
     # Methods for tokens
     @_(r'\d+')
@@ -117,13 +103,6 @@ class JSLexer(Lexer):
         token.value = ''
         return token
 
-    @_('alert', 'boolean', 'for', 'function', 'if', 'input', 'let', 'number', 'return', 'string', 'true', 'false')
-    def PALABRA_RESERVADA(self, token):
-        token.type = token.value.upper()
-        token.value = ''
-        return token
-
-    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
     def IDENTIFICADOR(self, token):
         if len(token.value) > 64:
             print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
@@ -133,6 +112,78 @@ class JSLexer(Lexer):
                 token.value = self._gestor_ts.inserta_ts(token.value)
             else:
                 token.value = indice
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def ALERT(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def BOOLEAN(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def FOR(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def FUNCTION(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def IF(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def INPUT(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def LET(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def NUMBER(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def RETURN(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def STRING(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def TRUE(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def FALSE(self, token):
+        token.type = token.value.upper()
+        token.value = ''
         return token
 
     # Line number tracking
