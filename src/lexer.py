@@ -7,17 +7,13 @@ class JSLexer(Lexer):
 
     def __init__(self, gestor_ts):
         self._gestor_ts = gestor_ts
-        self.tabla_op_aritmetico = ['+', '-', '++']
-        self.tabla_op_relacional = ['==', '!=']
-        self.tabla_op_logico = ['&&', '||']
-        # tabla_palabra_reservada = ['alert', 'boolean', 'for', 'function', 'if', 'input', 'le', 'number', 'return', 'string', 'true', 'false']
 
     # String containing ignored characters
     ignore = ' \t'
     ignore_comment = r'//.*'
     ignore_newline = r'\n+'
 
-    # Keywords and identificator
+    # Keywords and identifiers
     IDENTIFICADOR = r'[a-zA-Z][a-zA-Z0-9_]*'
     IDENTIFICADOR['alert'] = ALERT
     IDENTIFICADOR['boolean'] = BOOLEAN
@@ -33,9 +29,9 @@ class JSLexer(Lexer):
     IDENTIFICADOR['false'] = FALSE
 
     # Tokens
-    tokens = {IDENTIFICADOR, ENTERO, CADENA, ASIGNACION, ARITMETICO, RELACIONAL, LOGICO, LLAVEIZQ,
-              LLAVEDER, PARENTESISIZQ, PARENTESISDER, PUNTOCOMA, COMA, ALERT, BOOLEAN, FOR, FUNCTION, IF, INPUT, LET,
-              NUMBER, RETURN, STRING, TRUE, FALSE}
+    tokens = {IDENTIFICADOR, ENTERO, CADENA, ASIGNACION, ARITSUMA, ARITRESTA, ARITINCRE, RELIGUAL, RELDISTINTO, LOGAND,
+              LOGOR, LLAVEIZQ, LLAVEDER, PARENTESISIZQ, PARENTESISDER, PUNTOCOMA, COMA, ALERT, BOOLEAN, FOR, FUNCTION,
+              IF, INPUT, LET, NUMBER, RETURN, STRING, TRUE, FALSE}
 
     # Methods for tokens
     @_(r'\d+')
@@ -53,19 +49,39 @@ class JSLexer(Lexer):
         token.value = u'"{cadena}"'.format(cadena=token.value.strip("'"))
         return token
 
-    @_(r'\+\+', r'\/', r'-', r'\*', r'%', r'\+')
-    def ARITMETICO(self, token):
-        token.value = self.tabla_op_aritmetico.index(token.value) + 1
+    @_(r'\+\+')
+    def ARITINCRE(self, token):
+        token.value = ''
         return token
 
-    @_(r'==', r'!=', r'<=', r'>=', r'<', r'>')
-    def RELACIONAL(self, token):
-        token.value = self.tabla_op_relacional.index(token.value) + 1
+    @_(r'-')
+    def ARITRESTA(self, token):
+        token.value = ''
         return token
 
-    @_(r'(\&\&)', r'(\|\|)', r'(\!)')
-    def LOGICO(self, token):
-        token.value = self.tabla_op_logico.index(token.value) + 1
+    @_(r'\+')
+    def ARITSUMA(self, token):
+        token.value = ''
+        return token
+
+    @_(r'==')
+    def RELIGUAL(self, token):
+        token.value = ''
+        return token
+
+    @_(r'!=')
+    def RELDISTINTO(self, token):
+        token.value = ''
+        return token
+
+    @_(r'(\&\&)')
+    def LOGAND(self, token):
+        token.value = ''
+        return token
+
+    @_(r'(\|\|)')
+    def LOGOR(self, token):
+        token.value = ''
         return token
 
     @_(r'=')
