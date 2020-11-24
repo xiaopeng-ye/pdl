@@ -2,16 +2,10 @@ P -> B P
 P -> F P
 P -> S P
 P -> lambda
-F -> function H ID ( A ) { Z }
+F -> function H ID ( A ) { C }
 C -> B C
 C -> S C
 C -> lambda
-Z -> B Z
-Z -> S Z
-Z -> return X ;
-Z -> lambda
-X -> E
-X -> lambda
 E -> R Y
 Y -> || R Y
 Y -> lambda
@@ -48,6 +42,9 @@ G -> = E
 G -> ( L )
 S -> input ( ID ) ;
 S -> alert ( E ) ;
+S -> return X ;
+X -> E
+X -> lambda
 L -> E Q
 L -> lambda
 Q -> , E Q
