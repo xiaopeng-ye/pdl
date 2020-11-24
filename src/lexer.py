@@ -6,7 +6,7 @@ import re
 class JSLexer(Lexer):
 
     def __init__(self, gestor_ts):
-        self._gestor_ts = gestor_ts
+        self.gestor_ts = gestor_ts
 
     # String containing ignored characters
     ignore = ' \t'
@@ -123,9 +123,9 @@ class JSLexer(Lexer):
         if len(token.value) > 64:
             print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
         else:
-            indice = self._gestor_ts.busca_ts(token.value)
+            indice = self.gestor_ts.busca_ts(token.value)
             if indice is None:
-                token.value = self._gestor_ts.inserta_ts(token.value)
+                token.value = self.gestor_ts.inserta_ts(token.value)
             else:
                 token.value = indice
         return token
@@ -211,14 +211,15 @@ class JSLexer(Lexer):
         self.index += 1
 
 
-js_file = open('codigo.js', 'r')
-token_file = open('tokens.txt', 'w')
-ts = GestorTablaSimbolo()
-lexer = JSLexer(ts)
+if __name__ == '__main__':
+    js_file = open('codigo.js', 'r')
+    token_file = open('tokens.txt', 'w')
+    ts = GestorTablaSimbolo()
+    lexer = JSLexer(ts)
 
-for token in lexer.tokenize(js_file.read()):
-    token_file.write(f'<{token.type},{token.value}>\n')
+    for token in lexer.tokenize(js_file.read()):
+        token_file.write(f'<{token.type},{token.value}>\n')
 
-ts.imprime_fichero()
-token_file.close()
-js_file.close()
+    ts.imprime_fichero()
+    token_file.close()
+    js_file.close()
