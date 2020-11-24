@@ -16,7 +16,7 @@ class GestorTablaSimbolo:
     def busca_ts(self, lexema):
         return self._actual.posicion_lexema(lexema)
 
-    def buscar_ts_activa(self, lexema):
+    def busca_ts_activa(self, lexema):
         return self._actual.posicion_lexema(lexema)
 
     def inserta_ts(self, lexema):

@@ -3,53 +3,35 @@ from table import GestorTablaSimbolo
 import re
 
 
-# tabla_palabra_reservada = ['alert', 'boolean', 'for', 'function', 'if', 'input', 'le', 'number', 'return', 'string', 'true', 'false']
-
-
 class JSLexer(Lexer):
 
     def __init__(self, gestor_ts):
-        self._gestor_ts = gestor_ts
-        self.tabla_op_aritmetico = ['+', '-', '*', '/', '%', '++']
-        self.tabla_op_relacional = ['==', '!=', '<', '>', '<=', '>=']
-        self.tabla_op_logico = ['&&', '||', '!']
+        self.gestor_ts = gestor_ts
 
     # String containing ignored characters
     ignore = ' \t'
     ignore_comment = r'//.*'
     ignore_newline = r'\n+'
 
-    # ALERT, BOOLEAN, FOR, FUNCTION, IF, INPUT, LET, NUMBER, RETURN, STRING, TRUE, FALSE
-
-    # Regular expression rules for tokens, se va a borrar todo
-    # ARITMETICO = r'(\+\+)|(\/)|(-)|(\*)|(%)|(\+)'
-    # RELACIONAL = r'(==)|(!=)|(<=)|(>=)|(<)|(>)'
-    # ASIGNACION, = r'='
-    # LOGICO = r'(\&\&)|(\|\|)|(\!)'
-    # LLAVEIZQ = r'{'
-    # LLAVEDER = r'}'
-    # PARENTESISIZQ = r'\('
-    # PARENTESISDER = r'\)'
-    # PUNTO_COMA = r';'
-    # COMA = r','
-
-    # # Keywords
-    # IDENTIFICADOR['alert'] = ALERT
-    # IDENTIFICADOR['boolean'] = BOOLEAN
-    # IDENTIFICADOR['for'] = FOR
-    # IDENTIFICADOR['function'] = FUNCTION
-    # IDENTIFICADOR['if'] = IF
-    # IDENTIFICADOR['input'] = INPUT
-    # IDENTIFICADOR['let'] = LET
-    # IDENTIFICADOR['number'] = NUMBER
-    # IDENTIFICADOR['return'] = RETURN
-    # IDENTIFICADOR['string'] = STRING
-    # IDENTIFICADOR['true'] = TRUE
-    # IDENTIFICADOR['false'] = FALSE
+    # Keywords and identifiers
+    IDENTIFICADOR = r'[a-zA-Z][a-zA-Z0-9_]*'
+    IDENTIFICADOR['alert'] = ALERT
+    IDENTIFICADOR['boolean'] = BOOLEAN
+    IDENTIFICADOR['for'] = FOR
+    IDENTIFICADOR['function'] = FUNCTION
+    IDENTIFICADOR['if'] = IF
+    IDENTIFICADOR['input'] = INPUT
+    IDENTIFICADOR['let'] = LET
+    IDENTIFICADOR['number'] = NUMBER
+    IDENTIFICADOR['return'] = RETURN
+    IDENTIFICADOR['string'] = STRING
+    IDENTIFICADOR['true'] = TRUE
+    IDENTIFICADOR['false'] = FALSE
 
     # Tokens
-    tokens = {IDENTIFICADOR, ENTERO, CADENA, ASIGNACION, ARITMETICO, RELACIONAL, LOGICO, LLAVEIZQ,
-              LLAVEDER, PARENTESISIZQ, PARENTESISDER, PUNTOCOMA, COMA, PALABRA_RESERVADA}
+    tokens = {IDENTIFICADOR, ENTERO, CADENA, ASIGNACION, ARITSUMA, ARITRESTA, ARITINCRE, RELIGUAL, RELDISTINTO, LOGAND,
+              LOGOR, LLAVEIZQ, LLAVEDER, PARENTESISIZQ, PARENTESISDER, PUNTOCOMA, COMA, ALERT, BOOLEAN, FOR, FUNCTION,
+              IF, INPUT, LET, NUMBER, RETURN, STRING, TRUE, FALSE}
 
     # Methods for tokens
     @_(r'\d+')
@@ -67,19 +49,39 @@ class JSLexer(Lexer):
         token.value = u'"{cadena}"'.format(cadena=token.value.strip("'"))
         return token
 
-    @_(r'\+\+', r'\/', r'-', r'\*', r'%', r'\+')
-    def ARITMETICO(self, token):
-        token.value = self.tabla_op_aritmetico.index(token.value) + 1
+    @_(r'\+\+')
+    def ARITINCRE(self, token):
+        token.value = ''
         return token
 
-    @_(r'==', r'!=', r'<=', r'>=', r'<', r'>')
-    def RELACIONAL(self, token):
-        token.value = self.tabla_op_relacional.index(token.value) + 1
+    @_(r'-')
+    def ARITRESTA(self, token):
+        token.value = ''
         return token
 
-    @_(r'(\&\&)', r'(\|\|)', r'(\!)')
-    def LOGICO(self, token):
-        token.value = self.tabla_op_logico.index(token.value) + 1
+    @_(r'\+')
+    def ARITSUMA(self, token):
+        token.value = ''
+        return token
+
+    @_(r'==')
+    def RELIGUAL(self, token):
+        token.value = ''
+        return token
+
+    @_(r'!=')
+    def RELDISTINTO(self, token):
+        token.value = ''
+        return token
+
+    @_(r'(\&\&)')
+    def LOGAND(self, token):
+        token.value = ''
+        return token
+
+    @_(r'(\|\|)')
+    def LOGOR(self, token):
+        token.value = ''
         return token
 
     @_(r'=')
@@ -117,22 +119,87 @@ class JSLexer(Lexer):
         token.value = ''
         return token
 
-    @_('alert', 'boolean', 'for', 'function', 'if', 'input', 'let', 'number', 'return', 'string', 'true', 'false')
-    def PALABRA_RESERVADA(self, token):
+    def IDENTIFICADOR(self, token):
+        if len(token.value) > 64:
+            print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
+        else:
+            indice = self.gestor_ts.busca_ts(token.value)
+            if indice is None:
+                token.value = self.gestor_ts.inserta_ts(token.value)
+            else:
+                token.value = indice
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def ALERT(self, token):
         token.type = token.value.upper()
         token.value = ''
         return token
 
     @_(r'[a-zA-Z][a-zA-Z0-9_]*')
-    def IDENTIFICADOR(self, token):
-        if len(token.value) > 64:
-            print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
-        else:
-            indice = self._gestor_ts.busca_ts(token.value)
-            if indice is None:
-                token.value = self._gestor_ts.inserta_ts(token.value)
-            else:
-                token.value = indice
+    def BOOLEAN(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def FOR(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def FUNCTION(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def IF(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def INPUT(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def LET(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def NUMBER(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def RETURN(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def STRING(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def TRUE(self, token):
+        token.type = token.value.upper()
+        token.value = ''
+        return token
+
+    @_(r'[a-zA-Z][a-zA-Z0-9_]*')
+    def FALSE(self, token):
+        token.type = token.value.upper()
+        token.value = ''
         return token
 
     # Line number tracking
@@ -144,14 +211,15 @@ class JSLexer(Lexer):
         self.index += 1
 
 
-js_file = open('codigo.js', 'r')
-token_file = open('tokens.txt', 'w')
-ts = GestorTablaSimbolo()
-lexer = JSLexer(ts)
+if __name__ == '__main__':
+    js_file = open('codigo.js', 'r')
+    token_file = open('tokens.txt', 'w')
+    ts = GestorTablaSimbolo()
+    lexer = JSLexer(ts)
 
-for token in lexer.tokenize(js_file.read()):
-    token_file.write(f'<{token.type},{token.value}>\n')
+    for token in lexer.tokenize(js_file.read()):
+        token_file.write(f'<{token.type},{token.value}>\n')
 
-ts.imprime_fichero()
-token_file.close()
-js_file.close()
+    ts.imprime_fichero()
+    token_file.close()
+    js_file.close()
