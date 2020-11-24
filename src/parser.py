@@ -17,7 +17,7 @@ class JSParser:
         self.terminales = {'alert', 'boolean', 'for', 'function', 'if', 'input', 'let', 'number', 'return', 'string',
                            'true', 'false', 'ID', 'ENTERO', 'CADENA', '=', '+', '-', '++', '==', '!=', '&&',
                            '||', '(', ')', '{', '}', ',', ';'}
-        self.no_terminales = {'P', 'B', 'S', 'Z', 'C', 'E', 'Y', 'X', 'F', 'A', 'K', 'L', 'Q ', 'H ', 'T ',
+        self.no_terminales = {'P', 'B', 'S', 'C', 'E', 'Y', 'X', 'F', 'A', 'K', 'L', 'Q ', 'H ', 'T ',
                               'R', 'I', 'U', 'O', 'V', 'J', 'W', 'D', 'G', 'M', 'N'}
         self.cast_tk = {'IDENTIFICADOR': 'ID', 'ENTERO': 'ENTERO', 'CADENA': 'CADENA', 'ASIGNACION': '=',
                         'ARITSUMA': '+', 'ARITRESTA': '-', 'ARITINCRE': '++', 'RELIGUAL': '==',
@@ -53,9 +53,9 @@ class JSParser:
                     print("no equipa el token:", token)
                     break
             else:
+                # print(x)
+                # print(token)
                 regla = self.tabla.loc[x, token]
-                print(pila)
-                print(token)
                 if not pd.isnull(regla):
                     pila.pop()
                     lista_reglas.append(regla)
@@ -70,7 +70,7 @@ class JSParser:
                 break
 
         if token == x:
-            print('accepted')
+            print('Accepted')
         self.token_file.close()
         return lista_reglas
 
