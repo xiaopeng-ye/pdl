@@ -1,4 +1,4 @@
-P -> B P  
+P -> B P
 P -> F P
 P -> S P
 P -> lambda
@@ -9,10 +9,11 @@ C -> lambda
 Z -> B Z
 Z -> S Z
 Z -> return X ;
+Z -> lambda
 X -> E
 X -> lambda
 E -> R Y
-E -> || R Y
+Y -> || R Y
 Y -> lambda
 R -> U I
 I -> && U
@@ -32,7 +33,7 @@ W -> ENTERO
 W -> CADENA
 W -> true
 W -> false
-D -> ( R )
+D -> ( L )
 D -> lambda
 B -> let T ID ;
 B -> if ( E ) S
@@ -49,7 +50,7 @@ S -> input ( ID ) ;
 S -> alert ( E ) ;
 L -> E Q
 L -> lambda
-Q -> , L
+Q -> , E Q
 Q -> lambda
 H -> T
 H -> lambda
@@ -58,6 +59,5 @@ T -> string
 T -> number
 A -> T ID K
 A -> lambda
-K -> , A
+K -> , T ID K
 K -> lambda
-z -> lambda

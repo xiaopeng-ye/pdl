@@ -1,14 +1,42 @@
-let number a;
-let number b;
-let number int;
-alert ('Introduce el primer operando');
-input (a);
-alert ('Introduce el segundo operando');
-input (b);
-function number operacion (number num1, number num2)
+let string s;
+let number    uno;
+let number    UNO;
+function number Factorial (number n)
 {
-	return num1 + num2 - 77;
+	let number i;
+	let number factorial;
+	for (i = 1; i == n; n=i)
+	{
+		factorial = factorial-i;
+	}
+	return factorial;
 }
 
-int = 0;
-alert (operacion (a, b));
+alert ((4+5-77-(88+33)));
+let number For;
+let number functional;
+let number While;
+
+function print (string s, string msg, number f)
+{
+	alert (s); alert (msg); alert (f);
+	return;
+}
+function string cadena (boolean log)
+{
+	for (uno=1;log;)
+	{
+		print (s, 'hola', 33);
+		if (uno != UNO)	return s;
+	}
+}
+s = 'El factorial ';
+
+alert (s);
+alert ('Introduce un numero.');
+input (num);
+let
+boolean
+booleano;
+if (num == 0)		alert ('No existe el factorial de un negativo.');
+print (cadena (true), 'recursivo es: ', Factorial (num));

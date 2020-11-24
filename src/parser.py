@@ -43,8 +43,8 @@ class JSParser:
         token = self.sig_tok(tks)
         x = pila[-1]
         while True:
-            print(x)
-            print(pila)
+            # print(x)
+            # print(pila)
             if x in self.terminales:
                 if x == token:
                     pila.pop()
@@ -54,6 +54,7 @@ class JSParser:
                     break
             else:
                 regla = self.tabla.loc[x, token]
+                print(pila)
                 print(token)
                 if not pd.isnull(regla):
                     pila.pop()
