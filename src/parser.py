@@ -82,4 +82,5 @@ if __name__ == '__main__':
     tokens = lexer.tokenize(js_file.read())
     parser = JSParser()
     lista = parser.parse(tokens)
-    print(lista)
+    paser_file = open('descendente.txt', 'w')
+    paser_file.write(' '.join(lista))
