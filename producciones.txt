@@ -2,59 +2,59 @@ P -> B P
 P -> F P
 P -> S P
 P -> lambda
-F -> function H ID ( A ) { C }
-C -> B C
-C -> S C
-C -> lambda
-E -> R Y
-Y -> || R Y
-Y -> lambda
-R -> U I
-I -> && U
-I -> lambda
-U -> V O
-O -> != V
-O -> == V
-O -> lambda
-V -> W J
-J -> + W J
-J -> - W J
-J -> lambda
-W -> ++ ID
-W -> ( E )
-W -> ID D
-W -> ENTERO
-W -> CADENA
-W -> true
-W -> false
-D -> ( L )
-D -> lambda
-B -> let T ID ;
-B -> if ( E ) S
-B -> for ( N ; E ; M ) { C }
-N -> ID = E
-N -> lambda
-M -> N
-M -> ++ ID
-S -> ID G ;
-S -> ++ ID ;
-G -> = E
-G -> ( L )
-S -> input ( ID ) ;
-S -> alert ( E ) ;
-S -> return X ;
-X -> E
-X -> lambda
-L -> E Q
-L -> lambda
-Q -> , E Q
-Q -> lambda
-H -> T
-H -> lambda
-T -> boolean
-T -> string
-T -> number
-A -> T ID K
-A -> lambda
-K -> , T ID K
-K -> lambda
+F -> function regla_F1 H ID ( regla_F2 A ) { C regla_F3 } regla_F4
+C -> B C regla_C1
+C -> S C regla_C1
+C -> lambda regla_C2
+E -> R Y regla_E1
+Y -> || R Y regla_Y
+Y -> lambda regla_lambda
+R -> U I regla_R
+I -> && U regla_I
+I -> lambda regla_lambda
+U -> V O regla_O
+O -> != V regla_V
+O -> == V regla_V
+O -> lambda regla_lambda
+V -> W J regla_V
+J -> + W J regla_J
+J -> - W J regla_J
+J -> lambda regla_lambda
+W -> ++ ID regla_W1
+W -> ( E ) regla_W2
+W -> ID D regla_W3
+W -> ENTERO regla_W4
+W -> CADENA regla_W5
+W -> true regla_W67
+W -> false regla_W67
+D -> ( L ) regla_D
+D -> lambda regla_lambda
+B -> let regla_B1_1 T ID ; regla_B1_2
+B -> if ( E ) S regla_B2
+B -> for ( N ; E ; M ) { C } regla_B3
+N -> ID = E regla_N1
+N -> lambda regla_N2
+M -> N regla_M1
+M -> ++ ID regla_M2
+S -> ID G ; regla_S1
+S -> ++ ID ; regla_S2
+G -> = E regla_G1
+G -> ( L ) regla_2
+S -> input ( ID ) ; regla_S1
+S -> alert ( E ) ; regla_S1
+S -> return X ; regla_S2
+X -> E regla_X
+X -> lambda regla_lambda
+L -> E Q regla_L
+L -> lambda regla_lambda
+Q -> , E Q regla_Q
+Q -> lambda regla_lambda
+H -> T regla_T
+H -> lambda regla_lambda
+T -> boolean regla_T1
+T -> string regla_T2
+T -> number regla_T3
+A -> T ID K regla_A1
+A -> lambda regla_A2
+K -> , T ID K regla_K1
+K -> lambda regla_K2
