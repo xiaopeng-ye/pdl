@@ -53,8 +53,11 @@ class JSParser:
         token = self.sig_tok(tks)
         x = pila[-1]
         while True:
-            # print(x)
-            # print(pila)
+            print(x.valor)
+            print('pila:', end=' ')
+            for e in pila:
+                print(e.valor, end=',')
+            print()
 
             # terminal
             if x.valor in self.terminales:
@@ -65,14 +68,14 @@ class JSParser:
                     semantico.pila_aux.append(simbolo)
                     token = self.sig_tok(tks)
                 else:
-                    print("no equipa el token:", token)
+                    print("no equipa el token:", token.type)
                     break
 
             # no terminal
             elif x.valor in self.no_terminales:
                 # print(x)
                 # print(token)
-                regla = self.tabla.loc[x, token]
+                regla = self.tabla.loc[x.valor, token.type]
                 if not pd.isnull(regla):
                     lista_reglas.append(regla)
                     semantico.pila_aux.append(pila.pop())
@@ -96,7 +99,7 @@ class JSParser:
             print('Accepted')
 
         # cerrar los recursos
-        with open('descendente.txt', 'w') as f:
+        with open('parse.txt', 'w') as f:
             f.write(' '.join(lista_reglas))
         ts.imprime_fichero()
         js_file.close()

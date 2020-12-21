@@ -209,11 +209,11 @@ class JSSemantic:
 
     def regla_B1_2(self):  # B -> let T ID ;
         self.pila_aux.pop()
-        id = self.pila_aux.pop()
+        id_ = self.pila_aux.pop()
         t = self.pila_aux.pop()
         self.pila_aux.pop()
         b = self.pila_aux[-1]
-        self.gestor_ts.aniadir_variable_ts(id.pos, t.tipo, t.ancho)
+        self.gestor_ts.aniadir_variable_ts(id_.pos, t.tipo, t.ancho)
         b.tipo = 'ok'
         b.ret = 'vacio'
         self.gestor_ts.zona_decl = False
