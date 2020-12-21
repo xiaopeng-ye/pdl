@@ -129,8 +129,11 @@ class JSLexer(Lexer):
                 else:
                     print('Ya existe el identificador a declarar')
             else:
-                if self.gestor_ts.busca_ts(token.value) is None:
+                indice = self.gestor_ts.busca_ts(token.value)
+                if indice is None:
                     print('Idendificador no declarado')
+                else:
+                    token.value = indice
         return token
 
     @_(r'[a-zA-Z][a-zA-Z0-9_]*')
