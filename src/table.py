@@ -7,20 +7,42 @@ class GestorTablaSimbolo:
         self._global = TablaSimbolo('global')
         self._lista_ts.append(self._global)
         self._actual = self._global
-        self._zona_decl = False
+        self.zona_decl = False
 
-    def crea_tabla(self, nombre_funcion):
-        self._actual = TablaSimbolo(nombre_funcion)
+    def crea_tabla(self, indice):
+        self._actual = TablaSimbolo(self._global.get_simbolo(indice).lexema)
+
+    def libera_tabla(self):
         self._lista_ts.append(self._actual)
+        self._actual = self._global
 
     def busca_ts(self, lexema):
-        return self._actual.posicion_lexema(lexema)
+        index = self._actual.posicion_lexema(lexema)
+        return index if index else self._global.posicion_lexema(lexema)
 
     def busca_ts_activa(self, lexema):
         return self._actual.posicion_lexema(lexema)
 
     def inserta_ts(self, lexema):
         return self._actual.insertar_lexema(lexema)
+
+    def aniadir_variable_ts(self, indice, tipo, tam):
+        simbolo = self._actual.get_simbolo(indice)
+        simbolo['tipo'] = tipo
+        simbolo['despl'] = self._actual.despl
+        self._actual.despl += tam
+
+    def aniadir_funcion_ts(self, indice, numParam, tipoParam, tipoRetorno):
+        simbolo = self._actual.get_simbolo(indice)
+        simbolo['tipo'] = 'funcion'
+        simbolo['numParam'] = numParam
+        simbolo['tipoParam'] = tipoParam
+        simbolo['tipoRetorno'] = tipoRetorno
+        simbolo['etiquta'] = simbolo.lexema
+
+    def buscar_simbolo_ts(self, indice):
+        simbolo = self._actual.get_simbolo(indice)
+        return simbolo if simbolo else self._global.get_simbolo(indice)
 
     def imprime_fichero(self):
         with open('tabla_simbolos.txt', 'w') as f:
@@ -33,9 +55,9 @@ class GestorTablaSimbolo:
 class TablaSimbolo:
     def __init__(self, nombre):
         self._nombre = nombre
-        self._simbolos_dict = OrderedDict()
-        self._simbolos_list = []
-        self._despl = 0
+        self.simbolos_dict = OrderedDict()
+        self.simbolos_list = []
+        self.despl = 0
 
     @property
     def nombre(self):
@@ -53,17 +75,21 @@ class TablaSimbolo:
         else:
             return None
 
-    def get_lexema(self, indice):
+    def get_simbolo(self, indice):
         return self._simbolos_list[indice]
 
     def __str__(self):
-        return ''.join([str(simbolo) for simbolo in self._simbolos_dict.values()])
+        return '\n'.join([str(simbolo) for simbolo in self._simbolos_dict.values()])
 
 
 class Simbolo:
     def __init__(self, lexema):
         self._lexema = lexema
         self._propiedad = {}
+
+    @property
+    def lexema(self):
+        return self._lexema
 
     def __setitem__(self, key, value):
         self._propiedad[key] = value
@@ -80,13 +106,15 @@ class Simbolo:
 if __name__ == '__main__':
     ts = TablaSimbolo('Global')
     ts.insertar_lexema('factorial')
-    s = ts.get_lexema(0)
+    s = ts.get_simbolo(0)
+    s.nombre = 'hello'
+    print(s.nombre)
     s['tipo'] = 'funcion'
     s['numParm'] = 2
-    s['tipoParam1'] = 'boolean'
-    s['tipoParam2'] = 'string'
+    s['tipoParam'] = 'boolean string'
+    # s['tipoParam2'] = 'string'
     ts.insertar_lexema('var2')
-    s = ts.get_lexema(1)
+    s = ts.get_simbolo(1)
     s['tipo'] = 'entero'
     s['despl'] = 8
     print(ts)

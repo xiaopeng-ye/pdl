@@ -1,12 +1,14 @@
 from table import GestorTablaSimbolo
 from lexer import JSLexer
+from semantic import JSSemantic
 from collections import deque
 import pandas as pd
 
 
 class JSParser:
 
-    def __init__(self):
+    def __init__(self, path):
+        self.path = path
         self.tabla = pd.read_csv('descendente_tabular.csv', index_col=0, dtype=str)
         self.producciones = ['vacia']
         self.token_file = None
@@ -34,53 +36,79 @@ class JSParser:
         except StopIteration:
             return '$'
         self.token_file.write(f'<{token.type},{token.value}>\n')
-        return self.cast_tk[token.type]
+        token.type = self.cast_tk[token.type]
+        return token
 
-    def parse(self, tks):
+    def parse(self):
+        # inicializar todos los componentes
+        ts = GestorTablaSimbolo()
+        lexico = JSLexer(ts)
+        js_file = open(self.path, 'r')
+        tks = lexico.tokenize(js_file.read())
+        semantico = JSSemantic(ts)
         self.token_file = open('tokens.txt', 'w')
-        pila = deque(['$', 'P'])
         lista_reglas = ['Descendente']
+        # algoritmo del analizador sintactico
+        pila = deque([Simbolo('$'), Simbolo('P')])
         token = self.sig_tok(tks)
         x = pila[-1]
         while True:
             # print(x)
             # print(pila)
-            if x in self.terminales:
-                if x == token:
-                    pila.pop()
+
+            # terminal
+            if x.valor in self.terminales:
+                if x.valor == token.type:
+                    simbolo = pila.pop()
+                    if token.type == 'ID':
+                        simbolo.pos = token.value
+                    semantico.pila_aux.append(simbolo)
                     token = self.sig_tok(tks)
                 else:
                     print("no equipa el token:", token)
                     break
-            else:
+
+            # no terminal
+            elif x.valor in self.no_terminales:
                 # print(x)
                 # print(token)
                 regla = self.tabla.loc[x, token]
                 if not pd.isnull(regla):
-                    pila.pop()
                     lista_reglas.append(regla)
+                    semantico.pila_aux.append(pila.pop())
                     for elemento in reversed((self.producciones[int(regla)].split('->'))[1].strip().split(' ')):
                         if elemento != 'lambda':
-                            pila.append(elemento)
+                            pila.append(Simbolo(elemento))
                 else:
                     print("No hay regla para seguir")
                     break
+
+            # accion semantica
+            else:
+                eval('semantico.' + simbolo.valor + '()')
+                pila.pop()
+
             x = pila[-1]
             if x == '$':
                 break
 
         if token == x:
             print('Accepted')
+
+        # cerrar los recursos
+        with open('descendente.txt', 'w') as f:
+            f.write(' '.join(lista_reglas))
+        ts.imprime_fichero()
+        js_file.close()
         self.token_file.close()
-        return lista_reglas
+
+
+class Simbolo:
+
+    def __init__(self, valor):
+        self.valor = valor
 
 
 if __name__ == '__main__':
-    ts = GestorTablaSimbolo()
-    lexer = JSLexer(ts)
-    js_file = open('codigo.js', 'r')
-    tokens = lexer.tokenize(js_file.read())
-    parser = JSParser()
-    lista = parser.parse(tokens)
-    paser_file = open('descendente.txt', 'w')
-    paser_file.write(' '.join(lista))
+    parser = JSParser('codigo.js')
+    parser.parse()

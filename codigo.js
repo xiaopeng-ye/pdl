@@ -1,14 +1,29 @@
-let number a;
-let number b;
-let number int;
-alert ('Introduce el primer operando');
-input (a);
-alert ('Introduce el segundo operando');
-input (b);
-function number operacion (number num1, number num2)
+let number number1;
+let string cadena;input(cadena);
+let boolean logico1;let boolean logico2;
+
+number1 = 378;
+
+number2 = number1;
+cadena = 'string';
+
+function string ff(string ss)
 {
-	return num1+num2;
+	logico2 =  logico1;
+	if (logico2) cadena = ff (ss);
+	varglobal = 078;
+	return cadena;
 }
 
-int = operacion (a, b);
-alert (int);
+function string funcion (string logico2)
+{	let number var;
+
+  for (logico2='';number1 == number2;number2 = number1){
+	logico1 = number1 != number2;alert(10000);
+  }
+
+  return logico2;
+}
+cadena = ((ff(funcion(cadena)));
+alert(cadena);
+
