@@ -123,11 +123,14 @@ class JSLexer(Lexer):
         if len(token.value) > 64:
             print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
         else:
-            indice = self.gestor_ts.busca_ts(token.value)
-            if indice is None:
-                token.value = self.gestor_ts.inserta_ts(token.value)
+            if self.gestor_ts.zona_decl:
+                if self.gestor_ts.busca_ts_activa(token.value) is None:
+                    token.value = self.gestor_ts.inserta_ts(token.value)
+                else:
+                    print('Ya existe el identificador a declarar')
             else:
-                token.value = indice
+                if self.gestor_ts.busca_ts(token.value) is None:
+                    print('Idendificador no declarado')
         return token
 
     @_(r'[a-zA-Z][a-zA-Z0-9_]*')
