@@ -18,6 +18,7 @@ class GestorTablaSimbolo:
 
     def busca_ts(self, lexema):
         index = self.actual.posicion_lexema(lexema)
+        print(index, lexema, 'busca_ts-----------------------')
         return index if index else self.global_.posicion_lexema(lexema)
 
     def busca_ts_activa(self, lexema):
@@ -49,7 +50,7 @@ class GestorTablaSimbolo:
             for i, tabla in zip(range(1, len(self.lista_ts) + 1), self.lista_ts):
                 f.write(f"TABLA {tabla.nombre} # {i} :\n")
                 f.write(str(tabla))
-                f.write('-------------------------------------')
+                f.write('\n-------------------------------------')
 
 
 class TablaSimbolo:

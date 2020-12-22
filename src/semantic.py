@@ -1,5 +1,4 @@
 from collections import deque
-from table import GestorTablaSimbolo
 
 
 class JSSemantic:
@@ -177,12 +176,12 @@ class JSSemantic:
         d = self.pila_aux.pop()
         id_ = self.pila_aux.pop()
         w = self.pila_aux[-1]
-        simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
+        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
 
         if d.tipo == 'vacio':
-            w.tipo = simbolo['tipo']
-        elif simbolo['tipoParam']:
-            w.tipo = simbolo['tipoRetorno']
+            w.tipo = id_simbolo['tipo']
+        elif id_simbolo['tipoParam']:
+            w.tipo = id_simbolo['tipoRetorno']
         else:
             w.tipo = 'error'
 
@@ -200,11 +199,11 @@ class JSSemantic:
 
     def regla_D(self):  # D -> (L)  ##igual G2
         self.pila_aux.pop()
-        l = self.pila_aux.pop()
+        ll = self.pila_aux.pop()
         self.pila_aux.pop()
-        self.pila_aux[-1].tipo = l.tipo
+        self.pila_aux[-1].tipo = ll.tipo
 
-    def regla_B1_1(self):  # B -> let T ID ;
+    def regla_B1_1(self):  # B -> let
         self.gestor_ts.zona_decl = True
 
     def regla_B1_2(self):  # B -> let T ID ;
@@ -256,7 +255,7 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         n = self.pila_aux[-1]
 
-        if id_.tipo == e.tipo:
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == e.tipo:
             n.tipo = 'ok'
         else:
             n.tipo = 'error'
@@ -274,7 +273,7 @@ class JSSemantic:
         self.pila_aux.pop()
         m = self.pila_aux[-1]
 
-        if id_.tipo == 'entero':
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'entero':
             m.tipo = 'ok'
         else:
             m.tipo = 'error'
@@ -285,12 +284,14 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         s = self.pila_aux[-1]
 
-        if id_.tipo == 'funcion':
-            if id_.tipo_param == g.tipo:
+        print(id_.pos)
+        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
+        if id_simbolo['tipo'] == 'funcion':
+            if id_simbolo['tipoParam'] == g.tipo:
                 s.tipo = 'ok'
             else:
                 s.tipo = 'error'
-        elif id_.tipo == g.tipo:
+        elif id_simbolo['tipo'] == g.tipo:
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
@@ -301,7 +302,7 @@ class JSSemantic:
         self.pila_aux.pop()
         s = self.pila_aux[-1]
 
-        if id_.tipo == 'entero':
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'entero':
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
@@ -319,20 +320,33 @@ class JSSemantic:
         g = self.pila_aux[-1]
         g.tipo = ll.tipo
 
-    def regla_S1(self):  # S -> input ( ID ) ; y S -> alert ( E ) ;
+    def regla_S3(self):  # S -> input ( ID ) ;
         self.pila_aux.pop()
         self.pila_aux.pop()
         id_ = self.pila_aux.pop()
         self.pila_aux.pop()
         self.pila_aux.pop()
         s = self.pila_aux[-1]
-
-        if id_.tipo == 'logico':
+        print(id_.pos, 'dsafdaskljfkldsafljldkjflkdasjlfjasjdfjlskf')
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'logico':
             s.tipo = 'error'
         else:
             s.tipo = 'ok'
 
-    def regla_S2(self):  # S -> return X ;
+    def regla_S4(self):  # S -> alert ( E ) ;
+        self.pila_aux.pop()
+        self.pila_aux.pop()
+        e = self.pila_aux.pop()
+        self.pila_aux.pop()
+        self.pila_aux.pop()
+        s = self.pila_aux[-1]
+
+        if e.tipo == 'logico':
+            s.tipo = 'error'
+        else:
+            s.tipo = 'ok'
+
+    def regla_S5(self):  # S -> return X ;
         self.pila_aux.pop()
         x = self.pila_aux.pop()
         self.pila_aux.pop()
@@ -413,6 +427,7 @@ class JSSemantic:
         t = self.pila_aux.pop()
         self.pila_aux.pop()
         k = self.pila_aux[-1]
+
         if k.tipo == 'vacio':
             k.tipo = t.tipo
         else:

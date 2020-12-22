@@ -40,9 +40,9 @@ S -> ID G ; regla_S1
 S -> ++ ID ; regla_S2
 G -> = E regla_G1
 G -> ( L ) regla_2
-S -> input ( ID ) ; regla_S1
-S -> alert ( E ) ; regla_S1
-S -> return X ; regla_S2
+S -> input ( ID ) ; regla_S3
+S -> alert ( E ) ; regla_S4
+S -> return X ; regla_S5
 X -> E regla_X
 X -> lambda regla_lambda
 L -> E Q regla_L

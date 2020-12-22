@@ -127,11 +127,14 @@ class JSLexer(Lexer):
                 if self.gestor_ts.busca_ts_activa(token.value) is None:
                     token.value = self.gestor_ts.inserta_ts(token.value)
                 else:
+                    token.value = None
                     print('Ya existe el identificador a declarar')
             else:
                 indice = self.gestor_ts.busca_ts(token.value)
+                print(indice, '--------------------------------------------------')
                 if indice is None:
-                    print('Idendificador no declarado')
+                    token.value = None
+                    print('Identificador no declarado')
                 else:
                     token.value = indice
         return token

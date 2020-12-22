@@ -19,7 +19,7 @@ class JSParser:
         self.terminales = {'alert', 'boolean', 'for', 'function', 'if', 'input', 'let', 'number', 'return', 'string',
                            'true', 'false', 'ID', 'ENTERO', 'CADENA', '=', '+', '-', '++', '==', '!=', '&&',
                            '||', '(', ')', '{', '}', ',', ';'}
-        self.no_terminales = {'P', 'B', 'S', 'C', 'E', 'Y', 'X', 'F', 'A', 'K', 'L', 'Q ', 'H ', 'T ',
+        self.no_terminales = {'P', 'B', 'S', 'C', 'E', 'Y', 'X', 'F', 'A', 'K', 'L', 'Q', 'H', 'T',
                               'R', 'I', 'U', 'O', 'V', 'J', 'W', 'D', 'G', 'M', 'N'}
         self.cast_tk = {'IDENTIFICADOR': 'ID', 'ENTERO': 'ENTERO', 'CADENA': 'CADENA', 'ASIGNACION': '=',
                         'ARITSUMA': '+', 'ARITRESTA': '-', 'ARITINCRE': '++', 'RELIGUAL': '==',
@@ -53,14 +53,21 @@ class JSParser:
         token = self.sig_tok(tks)
         x = pila[-1]
         while True:
-            print(x.valor)
             print('pila:', end=' ')
             for e in pila:
                 print(e.valor, end=',')
             print()
+            print(x.valor)
+
+            print('pila_aux:', end=' ')
+            for e in semantico.pila_aux:
+                print(e.valor, end=',')
+            print()
+            print(x.valor)
 
             # terminal
             if x.valor in self.terminales:
+                print('ejecuta terminal')
                 if x.valor == token.type:
                     simbolo = pila.pop()
                     if token.type == 'ID':
@@ -73,6 +80,7 @@ class JSParser:
 
             # no terminal
             elif x.valor in self.no_terminales:
+                print('ejecuta no terminal')
                 # print(x)
                 # print(token)
                 regla = self.tabla.loc[x.valor, token.type]
@@ -88,13 +96,14 @@ class JSParser:
 
             # accion semantica
             else:
-                eval('semantico.' + simbolo.valor + '()')
+                print('ejecuta accion semantica')
+                eval('semantico.' + x.valor + '()')
                 pila.pop()
 
             x = pila[-1]
             if x == '$':
                 break
-
+            ts.imprime_fichero()
         if token == x:
             print('Accepted')
 

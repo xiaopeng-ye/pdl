@@ -1,29 +1,18 @@
-let number number1;
-let string cadena;input(cadena);
-let boolean logico1;let boolean logico2;
+let number x;
+let number z;
+let boolean b;
 
-number1 = 378;
-
-number2 = number1;
-cadena = 'string';
-
-function string ff(string ss)
-{
-	logico2 =  logico1;
-	if (logico2) cadena = ff (ss);
-	varglobal = 078;
-	return cadena;
-}
-
-function string funcion (string logico2)
-{	let number var;
-
-  for (logico2='';number1 == number2;number2 = number1){
-	logico1 = number1 != number2;alert(10000);
-  }
-
-  return logico2;
-}
-cadena = ((ff(funcion(cadena)));
-alert(cadena);
-
+alert ('PdL');
+input (esto_es_un_nombre_de_variable_global_de_tipo_entero);
+input (z);
+alert (z);
+x=z;
+alert (z-1);
+b=b&&b;if (b)
+x =
+  x - 6
+    - z
+    + 1
+    + (2
+    - y
+    - 6);
