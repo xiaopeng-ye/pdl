@@ -9,6 +9,7 @@ class JSLexer(Lexer):
         self.gestor_ts = gestor_ts
         self.gestor_err = gestor_err
 
+
     # String containing ignored characters
     ignore = ' \t'
     ignore_comment = r'//.*'
@@ -41,12 +42,14 @@ class JSLexer(Lexer):
         if -32767 < token.value < 32767:
             return token
         else:
-            print('Línea %d: Valor incorrecto, debe corresponder a un número de 16 bits' % self.lineno)
+            self.gestor_err.imprime('Léxico', 'Tamaño de constante inválido, debe corresponder a un número de 16 bits',
+                                    token.lineno)
+            # print('Línea %d: Valor incorrecto, debe corresponder a un número de 16 bits' % self.lineno)
 
     @_(r'\'.*\'')
     def CADENA(self, token):
         if len(token.value) > 64:
-            self.gestor_err.imprime('Semántico', 'Tamaño de cadena inválido, debe ser menor de 64 caracteres',
+            self.gestor_err.imprime('Léxico', 'Tamaño de cadena inválido, debe ser menor de 64 caracteres',
                                     token.lineno)
         token.value = re.sub(r"\\\'", "'", token.value)
         token.value = re.sub(r'\\\\', r'\\', token.value)
@@ -217,8 +220,16 @@ class JSLexer(Lexer):
         self.lineno += token.value.count('\n')
 
     def error(self, token):
-        print('Línea %d: Caracter erróneo %r' % (self.lineno, token.value[0]))
+
+        # print('Línea %d: Caracter erróneo %r' % (self.lineno, token.value[0]))
+
         self.index += 1
+        t_error = self.gestor_err.error_lexico[token.value[0]]
+        if t_error:
+            self.gestor_err.imprime('Léxico',t_error, token.lineno)
+        else:
+            self.gestor_err.imprime('Léxico', 'Caracter erróneo %r' % token.value[0], token.lineno)
+
 
 
 if __name__ == '__main__':
