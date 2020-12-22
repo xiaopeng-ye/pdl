@@ -5,8 +5,9 @@ import re
 
 class JSLexer(Lexer):
 
-    def __init__(self, gestor_ts):
+    def __init__(self, gestor_ts, gestor_err):
         self.gestor_ts = gestor_ts
+        self.gestor_err = gestor_err
 
     # String containing ignored characters
     ignore = ' \t'
@@ -44,6 +45,9 @@ class JSLexer(Lexer):
 
     @_(r'\'.*\'')
     def CADENA(self, token):
+        if len(token.value) > 64:
+            self.gestor_err.imprime('Semántico', 'Tamaño de cadena inválido, debe ser menor de 64 caracteres',
+                                    token.lineno)
         token.value = re.sub(r"\\\'", "'", token.value)
         token.value = re.sub(r'\\\\', r'\\', token.value)
         token.value = u'"{cadena}"'.format(cadena=token.value.strip("'"))
@@ -120,23 +124,20 @@ class JSLexer(Lexer):
         return token
 
     def IDENTIFICADOR(self, token):
-        if len(token.value) > 64:
-            print('Línea %d: Tamaño de cadena inválido, debe ser menor de 64 caracteres' % self.lineno)
-        else:
-            if self.gestor_ts.zona_decl:
-                if self.gestor_ts.busca_ts_activa(token.value) is None:
-                    token.value = self.gestor_ts.inserta_ts(token.value)
-                else:
-                    token.value = None
-                    print('Ya existe el identificador a declarar')
+        print(self.gestor_ts.zona_decl)
+        if self.gestor_ts.zona_decl:
+            if self.gestor_ts.busca_ts_activa(token.value) is None:
+                token.value = self.gestor_ts.inserta_ts_activa(token.value)
             else:
-                indice = self.gestor_ts.busca_ts(token.value)
-                print(indice, '--------------------------------------------------')
-                if indice is None:
-                    token.value = None
-                    print('Identificador no declarado')
-                else:
-                    token.value = indice
+                token.value = None
+                self.gestor_err.imprime('Semántico', 'Ya existe el identificador a declarar', token.lineno)
+        else:
+            indice = self.gestor_ts.busca_ts(token.value)
+            if indice is None:
+                token.value = self.gestor_ts.inserta_ts_global(token.value)
+                self.gestor_ts.aniadir_var_atributos_ts_global(token.value, 'entero', 2)
+            else:
+                token.value = indice
         return token
 
     @_(r'[a-zA-Z][a-zA-Z0-9_]*')

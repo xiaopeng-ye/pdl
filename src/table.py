@@ -11,46 +11,54 @@ class GestorTablaSimbolo:
 
     def crea_tabla(self, indice):
         self.actual = TablaSimbolo(self.global_.get_simbolo(indice).lexema)
+        self.lista_ts.append(self.actual)
 
     def libera_tabla(self):
-        self.lista_ts.append(self.actual)
         self.actual = self.global_
 
     def busca_ts(self, lexema):
         index = self.actual.posicion_lexema(lexema)
-        print(index, lexema, 'busca_ts-----------------------')
-        return index if index else self.global_.posicion_lexema(lexema)
+        return self.global_.posicion_lexema(lexema) if index is None else index
 
     def busca_ts_activa(self, lexema):
         return self.actual.posicion_lexema(lexema)
 
-    def inserta_ts(self, lexema):
+    def inserta_ts_activa(self, lexema):
         return self.actual.insertar_lexema(lexema)
 
-    def aniadir_variable_ts(self, indice, tipo, tam):
+    def inserta_ts_global(self, lexema):
+        return self.global_.insertar_lexema(lexema)
+
+    def aniadir_var_atributos_ts_activa(self, indice, tipo, tam):
         simbolo = self.actual.get_simbolo(indice)
         simbolo['tipo'] = tipo
         simbolo['despl'] = self.actual.despl
         self.actual.despl += tam
 
+    def aniadir_var_atributos_ts_global(self, indice, tipo, tam):
+        simbolo = self.global_.get_simbolo(indice)
+        simbolo['tipo'] = tipo
+        simbolo['despl'] = self.actual.despl
+        self.actual.despl += tam
+
     def aniadir_funcion_ts(self, indice, numParam, tipoParam, tipoRetorno):
-        simbolo = self.actual.get_simbolo(indice)
+        simbolo = self.global_.get_simbolo(indice)
         simbolo['tipo'] = 'funcion'
         simbolo['numParam'] = numParam
         simbolo['tipoParam'] = tipoParam
         simbolo['tipoRetorno'] = tipoRetorno
-        simbolo['etiquta'] = simbolo.lexema
+        simbolo['etiqueta'] = simbolo.lexema
 
     def buscar_simbolo_ts(self, indice):
         simbolo = self.actual.get_simbolo(indice)
-        return simbolo if simbolo else self.global_.get_simbolo(indice)
+        return self.global_.get_simbolo(indice) if simbolo is None else simbolo
 
     def imprime_fichero(self):
         with open('tabla_simbolos.txt', 'w') as f:
             for i, tabla in zip(range(1, len(self.lista_ts) + 1), self.lista_ts):
                 f.write(f"TABLA {tabla.nombre} # {i} :\n")
                 f.write(str(tabla))
-                f.write('\n-------------------------------------')
+                f.write('\n-------------------------------------\n\n')
 
 
 class TablaSimbolo:
@@ -77,7 +85,10 @@ class TablaSimbolo:
             return None
 
     def get_simbolo(self, indice):
-        return self.simbolos_list[indice]
+        try:
+            return self.simbolos_list[indice]
+        except IndexError:
+            return None
 
     def __str__(self):
         return '\n'.join([str(simbolo) for simbolo in self.simbolos_dict.values()])
@@ -96,12 +107,12 @@ class Simbolo:
         self._propiedad[key] = value
 
     def __getitem__(self, key):
-        return self._propiedad[key]
+        return self._propiedad[key] if key in self._propiedad else None
 
     def __str__(self):
-        return f"* LEXEMA : '{self._lexema}'\n  ATRIBUTOS :\n" + '\n'.join(
-            [u"  + {key} : {value}".format(key=key, value=("'" + value + "'") if isinstance(value, str) else value) for
-             key, value in self._propiedad.items()])
+        return f"* LEXEMA : '{self._lexema}'\n  ATRIBUTOS :\n" + ''.join(
+            [u"  + {key} : {value}\n".format(key=key, value=("'" + value + "'") if isinstance(value, str) else value)
+             for key, value in self._propiedad.items()])
 
 
 if __name__ == '__main__':

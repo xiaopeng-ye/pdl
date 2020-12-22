@@ -2,7 +2,7 @@ P -> B P
 P -> F P
 P -> S P
 P -> lambda
-F -> function regla_F1 H ID ( regla_F2 A ) { C regla_F3 } regla_F4
+F -> function regla_F1 H ID regla_F2 ( A ) regla_F3 { C regla_F4 } regla_F5
 C -> B C regla_C1
 C -> S C regla_C1
 C -> lambda regla_C2
@@ -25,11 +25,11 @@ W -> ( E ) regla_W2
 W -> ID D regla_W3
 W -> ENTERO regla_W4
 W -> CADENA regla_W5
-W -> true regla_W67
-W -> false regla_W67
+W -> true regla_W6
+W -> false regla_W6
 D -> ( L ) regla_D
 D -> lambda regla_lambda
-B -> let regla_B1_1 T ID ; regla_B1_2
+B -> let regla_B1_1 T ID regla_B1_3 ; regla_B1_2
 B -> if ( E ) S regla_B2
 B -> for ( N ; E ; M ) { C } regla_B3
 N -> ID = E regla_N1
@@ -39,7 +39,7 @@ M -> ++ ID regla_M2
 S -> ID G ; regla_S1
 S -> ++ ID ; regla_S2
 G -> = E regla_G1
-G -> ( L ) regla_2
+G -> ( L ) regla_G2
 S -> input ( ID ) ; regla_S3
 S -> alert ( E ) ; regla_S4
 S -> return X ; regla_S5
@@ -49,12 +49,12 @@ L -> E Q regla_L
 L -> lambda regla_lambda
 Q -> , E Q regla_Q
 Q -> lambda regla_lambda
-H -> T regla_T
+H -> T regla_H
 H -> lambda regla_lambda
 T -> boolean regla_T1
 T -> string regla_T2
 T -> number regla_T3
-A -> T ID K regla_A1
-A -> lambda regla_A2
-K -> , T ID K regla_K1
-K -> lambda regla_K2
+A -> T ID regla_A1 K regla_A2
+A -> lambda regla_lambda
+K -> , T ID regla_K1 K regla_K2
+K -> lambda regla_lambda

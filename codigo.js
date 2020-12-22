@@ -1,9 +1,18 @@
 let number x;
 let number z;
 let boolean b;
+let string c;
+c = 'dsafjkldsjfkljasdkl;fjkl;saj';
+
+function boolean hello(number a, string c){
+    let string cadena;
+    input(cadena);
+    b = 'dsaf';
+    return c;
+}
 
 alert ('PdL');
-input (esto_es_un_nombre_de_variable_global_de_tipo_entero);
+input (x);
 input (z);
 alert (z);
 x=z;
@@ -14,5 +23,5 @@ x =
     - z
     + 1
     + (2
-    - y
+    - x
     - 6);

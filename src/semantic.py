@@ -3,14 +3,15 @@ from collections import deque
 
 class JSSemantic:
 
-    def __init__(self, gestor_ts):
+    def __init__(self, gestor_ts, gestor_err):
         self.gestor_ts = gestor_ts
+        self.gestor_err = gestor_err
         self.pila_aux = deque()
 
-    def regla_F1(self):  # F -> function H
+    def regla_F1(self):  # F -> function
         self.gestor_ts.zona_decl = True
 
-    def regla_F2(self):  # F -> function H ID (
+    def regla_F2(self):  # F -> function H ID
         id_ = self.pila_aux[-1]
         self.gestor_ts.crea_tabla(id_.pos)
 
@@ -18,18 +19,21 @@ class JSSemantic:
         a = self.pila_aux[-2]
         id_ = self.pila_aux[-4]
         h = self.pila_aux[-5]
-        self.gestor_ts.aniadir_funcion_ts(id_.pos, len(a.tipo.split(' ')), a.tipo, h.ret)
+        self.gestor_ts.aniadir_funcion_ts(id_.pos, len(a.tipo.split(' ')), a.tipo, h.tipo)
         self.gestor_ts.zona_decl = False
 
     def regla_F4(self):  # F -> function H ID ( A ) { C
         c = self.pila_aux[-1]
         h = self.pila_aux[-7]
+        function = self.pila_aux[-8]
         f = self.pila_aux[-9]
 
         if c.ret == h.tipo:
             f.tipo = 'ok'
         else:
             f.tipo = 'error'
+            self.gestor_err.imprime('Semántico', 'El retorno de la función no coincide con el valor de return',
+                                    function.linea)
 
     def regla_F5(self):  # F -> function H ID ( A ) { C }
         self.gestor_ts.libera_tabla()
@@ -53,7 +57,9 @@ class JSSemantic:
         elif b.tipo == 'ok':
             c.tipo = c1.tipo
         elif c1.tipo == 'ok':
-            c.tipo == b.tipo
+            c.tipo = b.tipo
+        else:
+            c.tipo = 'error'
 
         if b.ret == c1.ret:
             c.ret = b.ret
@@ -62,7 +68,7 @@ class JSSemantic:
         elif c1.ret == 'vacio':
             c.ret = b.ret
         else:
-            c.ret == 'error'
+            c.ret = 'error'
 
     def regla_C2(self):  # C -> lambda
         c = self.pila_aux[-1]
@@ -98,6 +104,8 @@ class JSSemantic:
         if u.tipo == 'logico' and i.tipo == 'logico':
             r.tipo = 'ok'
         elif i.tipo == 'vacio':
+            r.tipo = u.tipo
+        else:
             r.tipo = 'error'
 
     def regla_I(self):  # I -> && U
@@ -153,9 +161,9 @@ class JSSemantic:
         j = self.pila_aux[-1]
 
         if w.tipo == 'entero' and (j1.tipo == 'entero' or j1.tipo == 'vacio'):
-            w.tipo = 'entero'
+            j.tipo = 'entero'
         else:
-            w.tipo = 'error'
+            j.tipo = 'error'
 
     def regla_W1(self):  # W -> ++ ID
         id_ = self.pila_aux.pop()
@@ -170,15 +178,16 @@ class JSSemantic:
         self.pila_aux.pop()
         e = self.pila_aux.pop()
         self.pila_aux.pop()
-        self.pila_aux[-1] = e.tipo
+        w = self.pila_aux[-1]
+        w.tipo = e.tipo
 
     def regla_W3(self):  # W -> ID D
         d = self.pila_aux.pop()
         id_ = self.pila_aux.pop()
         w = self.pila_aux[-1]
-        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
 
-        if d.tipo == 'vacio':
+        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
+        if d.tipo == 'vacio' and id_simbolo['tipo']:
             w.tipo = id_simbolo['tipo']
         elif id_simbolo['tipoParam']:
             w.tipo = id_simbolo['tipoRetorno']
@@ -193,7 +202,7 @@ class JSSemantic:
         self.pila_aux.pop()
         self.pila_aux[-1].tipo = 'cadena'
 
-    def regla_W67(self):  # W -> true | W -> false
+    def regla_W6(self):  # W -> true | W -> false
         self.pila_aux.pop()
         self.pila_aux[-1].tipo = 'logico'
 
@@ -212,9 +221,11 @@ class JSSemantic:
         t = self.pila_aux.pop()
         self.pila_aux.pop()
         b = self.pila_aux[-1]
-        self.gestor_ts.aniadir_variable_ts(id_.pos, t.tipo, t.ancho)
+        self.gestor_ts.aniadir_var_atributos_ts_activa(id_.pos, t.tipo, t.ancho)
         b.tipo = 'ok'
         b.ret = 'vacio'
+
+    def regla_B1_3(self):  # B -> let T ID
         self.gestor_ts.zona_decl = False
 
     def regla_B2(self):  # B -> if ( E ) S {
@@ -227,6 +238,7 @@ class JSSemantic:
 
         if e.tipo == 'logico':
             b.tipo = s.tipo
+            b.ret = s.ret
         else:
             b.tipo = 'error'
 
@@ -246,6 +258,7 @@ class JSSemantic:
 
         if e.tipo == 'logico':
             b.tipo = c.tipo
+            b.ret = c.ret
         else:
             b.tipo = 'error'
 
@@ -284,7 +297,6 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         s = self.pila_aux[-1]
 
-        print(id_.pos)
         id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
         if id_simbolo['tipo'] == 'funcion':
             if id_simbolo['tipoParam'] == g.tipo:
@@ -295,6 +307,7 @@ class JSSemantic:
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
+        s.ret = 'vacio'
 
     def regla_S2(self):  # S -> ++ ID ;
         self.pila_aux.pop()
@@ -306,6 +319,7 @@ class JSSemantic:
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
+        s.ret = 'vacio'
 
     def regla_G1(self):  # G -> = E
         e = self.pila_aux.pop()
@@ -327,11 +341,12 @@ class JSSemantic:
         self.pila_aux.pop()
         self.pila_aux.pop()
         s = self.pila_aux[-1]
-        print(id_.pos, 'dsafdaskljfkldsafljldkjflkdasjlfjasjdfjlskf')
+
         if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'logico':
             s.tipo = 'error'
         else:
             s.tipo = 'ok'
+        s.ret = 'vacio'
 
     def regla_S4(self):  # S -> alert ( E ) ;
         self.pila_aux.pop()
@@ -345,6 +360,7 @@ class JSSemantic:
             s.tipo = 'error'
         else:
             s.tipo = 'ok'
+        s.ret = 'vacio'
 
     def regla_S5(self):  # S -> return X ;
         self.pila_aux.pop()
@@ -369,7 +385,7 @@ class JSSemantic:
         else:
             ll.tipo = e.tipo + ' ' + q.tipo
 
-    def regla_Q(self):  # Q-> , E Q1
+    def regla_Q(self):  # Q -> , E Q1
         q1 = self.pila_aux.pop()
         e = self.pila_aux.pop()
         self.pila_aux.pop()
@@ -380,32 +396,32 @@ class JSSemantic:
         else:
             q.tipo = e.tipo + ' ' + q1.tipo
 
-    def regla_H(self):  # H-> T
+    def regla_H(self):  # H -> T
         t = self.pila_aux.pop()
         h = self.pila_aux[-1]
         h.tipo = t.tipo
 
-    def regla_T1(self):  # T-> boolean
+    def regla_T1(self):  # T -> boolean
         self.pila_aux.pop()
         self.pila_aux[-1].tipo = 'logico'
         self.pila_aux[-1].ancho = 2
 
-    def regla_T2(self):  # T-> string
+    def regla_T2(self):  # T -> string
         self.pila_aux.pop()
         self.pila_aux[-1].tipo = 'cadena'
         self.pila_aux[-1].ancho = 128
 
-    def regla_T3(self):  # T-> number
+    def regla_T3(self):  # T -> number
         self.pila_aux.pop()
         self.pila_aux[-1].tipo = 'entero'
         self.pila_aux[-1].ancho = 2
 
-    def regla_A1(self):  # A-> T ID
+    def regla_A1(self):  # A -> T ID
         id_ = self.pila_aux[-1]
         t = self.pila_aux[-2]
-        self.gestor_ts.aniadir_variable_ts(id_.pos, t.tipo, t.ancho)
+        self.gestor_ts.aniadir_var_atributos_ts_activa(id_.pos, t.tipo, t.ancho)
 
-    def regla_A2(self):  # A-> T ID K
+    def regla_A2(self):  # A -> T ID K
         k = self.pila_aux.pop()
         self.pila_aux.pop()
         t = self.pila_aux.pop()
@@ -419,19 +435,20 @@ class JSSemantic:
     def regla_K1(self):  # K -> , T ID
         id_ = self.pila_aux[-1]
         t = self.pila_aux[-2]
-        self.gestor_ts.aniadir_variable_ts(id_.pos, t.tipo, t.ancho)
+        self.gestor_ts.aniadir_var_atributos_ts_activa(id_.pos, t.tipo, t.ancho)
 
     def regla_K2(self):  # K -> , T ID K1
         k1 = self.pila_aux.pop()
         self.pila_aux.pop()
         t = self.pila_aux.pop()
         self.pila_aux.pop()
-        k = self.pila_aux[-1]
 
-        if k.tipo == 'vacio':
+        k = self.pila_aux[-1]
+        if k1.tipo == 'vacio':
             k.tipo = t.tipo
         else:
             k.tipo = t.tipo + ' ' + k1.tipo
 
-    def regla_lambda(self):
-        self.pila_aux[-1].tipo = 'vacio'
+    def regla_lambda(self):  # no_terminal -> lambda
+        no_terminal = self.pila_aux[-1]
+        no_terminal.tipo = 'vacio'

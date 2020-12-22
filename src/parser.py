@@ -1,3 +1,6 @@
+import sys
+
+from error import GestorError
 from table import GestorTablaSimbolo
 from lexer import JSLexer
 from semantic import JSSemantic
@@ -34,18 +37,20 @@ class JSParser:
         try:
             token = next(tks)
         except StopIteration:
-            return '$'
+            simbolo = Simbolo('$')
+            return simbolo
         self.token_file.write(f'<{token.type},{token.value}>\n')
         token.type = self.cast_tk[token.type]
         return token
 
     def parse(self):
         # inicializar todos los componentes
-        ts = GestorTablaSimbolo()
-        lexico = JSLexer(ts)
+        gestor_ts = GestorTablaSimbolo()
+        gestor_err = GestorError()
+        lexico = JSLexer(gestor_ts, gestor_err)
         js_file = open(self.path, 'r')
         tks = lexico.tokenize(js_file.read())
-        semantico = JSSemantic(ts)
+        semantico = JSSemantic(gestor_ts, gestor_err)
         self.token_file = open('tokens.txt', 'w')
         lista_reglas = ['Descendente']
         # algoritmo del analizador sintactico
@@ -53,37 +58,38 @@ class JSParser:
         token = self.sig_tok(tks)
         x = pila[-1]
         while True:
+            # actualiza la tabla cada iteracion
+            gestor_ts.imprime_fichero()
             print('pila:', end=' ')
-            for e in pila:
-                print(e.valor, end=',')
+            for el in pila:
+                print(el.type, end=',')
             print()
-            print(x.valor)
 
             print('pila_aux:', end=' ')
-            for e in semantico.pila_aux:
-                print(e.valor, end=',')
+            for el in semantico.pila_aux:
+                print(el.type, end=',')
             print()
-            print(x.valor)
+            print(x.type)
 
             # terminal
-            if x.valor in self.terminales:
+            if x.type in self.terminales:
                 print('ejecuta terminal')
-                if x.valor == token.type:
+                if x.type == token.type:
                     simbolo = pila.pop()
+                    simbolo.linea = token.lineno
                     if token.type == 'ID':
                         simbolo.pos = token.value
                     semantico.pila_aux.append(simbolo)
                     token = self.sig_tok(tks)
                 else:
-                    print("no equipa el token:", token.type)
-                    break
+                    gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}', token.lineno)
 
             # no terminal
-            elif x.valor in self.no_terminales:
+            elif x.type in self.no_terminales:
                 print('ejecuta no terminal')
                 # print(x)
                 # print(token)
-                regla = self.tabla.loc[x.valor, token.type]
+                regla = self.tabla.loc[x.type, token.type]
                 if not pd.isnull(regla):
                     lista_reglas.append(regla)
                     semantico.pila_aux.append(pila.pop())
@@ -91,36 +97,41 @@ class JSParser:
                         if elemento != 'lambda':
                             pila.append(Simbolo(elemento))
                 else:
-                    print("No hay regla para seguir")
-                    break
+                    gestor_err.imprime('Sintáctico', f"No se espera el símbolo '{token.type}'", token.lineno)
 
             # accion semantica
             else:
                 print('ejecuta accion semantica')
-                eval('semantico.' + x.valor + '()')
+                eval('semantico.' + x.type + '()')
                 pila.pop()
 
             x = pila[-1]
-            if x == '$':
+
+            if x.type == '$':
                 break
-            ts.imprime_fichero()
-        if token == x:
+
+        if token.type == x.type:
             print('Accepted')
 
         # cerrar los recursos
         with open('parse.txt', 'w') as f:
             f.write(' '.join(lista_reglas))
-        ts.imprime_fichero()
+        gestor_ts.imprime_fichero()
         js_file.close()
         self.token_file.close()
 
 
 class Simbolo:
+    # __slots__ = ('type', 'tipo', 'ret', 'ancho', 'pos')
 
     def __init__(self, valor):
-        self.valor = valor
+        self.type = valor
 
 
 if __name__ == '__main__':
-    parser = JSParser('codigo.js')
-    parser.parse()
+    try:
+        parser = JSParser('codigo.js')
+        parser.parse()
+    except Exception as e:
+        print(e, file=sys.stderr)
+        print('Error encontrado', file=sys.stderr)
