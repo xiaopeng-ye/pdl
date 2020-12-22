@@ -15,6 +15,7 @@ class JSParser:
         self.tabla = pd.read_csv('descendente_tabular.csv', index_col=0, dtype=str)
         self.producciones = ['vacia']
         self.token_file = None
+        self.lexico = None
         with open('producciones.txt', 'r') as f:
             for line in f:
                 self.producciones.append(line.strip())
@@ -38,6 +39,7 @@ class JSParser:
             token = next(tks)
         except StopIteration:
             simbolo = Simbolo('$')
+            simbolo.lineno = self.lexico.lineno
             return simbolo
         self.token_file.write(f'<{token.type},{token.value}>\n')
         token.type = self.cast_tk[token.type]
@@ -47,9 +49,9 @@ class JSParser:
         # inicializar todos los componentes
         gestor_ts = GestorTablaSimbolo()
         gestor_err = GestorError()
-        lexico = JSLexer(gestor_ts, gestor_err)
+        self.lexico = JSLexer(gestor_ts, gestor_err)
         js_file = open(self.path, 'r')
-        tks = lexico.tokenize(js_file.read())
+        tks = self.lexico.tokenize(js_file.read())
         semantico = JSSemantic(gestor_ts, gestor_err)
         self.token_file = open('tokens.txt', 'w')
         lista_reglas = ['Descendente']
@@ -80,15 +82,16 @@ class JSParser:
                     if token.type == 'ID':
                         simbolo.pos = token.value
                     semantico.pila_aux.append(simbolo)
+                    linea = token.lineno
                     token = self.sig_tok(tks)
                 else:
-                    gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}', token.lineno)
+                    gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}', token.lineno if x.type != ';' else linea)
 
             # no terminal
             elif x.type in self.no_terminales:
                 print('ejecuta no terminal')
                 # print(x)
-                # print(token)
+                print(token.type)
                 regla = self.tabla.loc[x.type, token.type]
                 if not pd.isnull(regla):
                     lista_reglas.append(regla)
@@ -97,7 +100,7 @@ class JSParser:
                         if elemento != 'lambda':
                             pila.append(Simbolo(elemento))
                 else:
-                    gestor_err.imprime('Sintáctico', f"No se espera el símbolo '{token.type}'", token.lineno)
+                    gestor_err.imprime('Sintáctico', f"No se espera el símbolo '{token.type}'" if token.type != '$' else "Se espera ';'", token.lineno)
 
             # accion semantica
             else:
