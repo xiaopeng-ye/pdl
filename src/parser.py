@@ -80,6 +80,7 @@ class JSParser:
                     simbolo = pila.pop()
                     simbolo.linea = token.lineno
                     if token.type == 'ID':
+                        simbolo.lex = token.index
                         simbolo.pos = token.value
                     semantico.pila_aux.append(simbolo)
                     linea = token.lineno

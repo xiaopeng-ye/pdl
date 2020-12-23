@@ -10,7 +10,7 @@ E -> R Y regla_E1
 Y -> || R Y regla_Y
 Y -> lambda regla_lambda
 R -> U I regla_R
-I -> && U regla_I
+I -> && U I regla_I
 I -> lambda regla_lambda
 U -> V O regla_U
 O -> != V regla_O

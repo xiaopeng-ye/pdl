@@ -1,29 +1,23 @@
+let number n1;
+let number n2;
+let boolean l1;
+let boolean l2;
+let string cad;
+input (n1);
+l1 = l2;
+if (l1&& l2 && l1) cad = 'hello';
+n2 = n1 + 378;
 
-
-let string cadena;input(cadena);
-let boolean logico1;let boolean logico2;
-let number number2;
-number1 = 378;
-
-number2 = number1;
-cadena = 'string';
-
-function string ff(string ss)
+alert(	33
+		-
+		n1
+		-
+		n2);
+function boolean ff(boolean ss)
 {
-	logico2 =  logico1;
-	if (logico2) cadena = ff (ss);
-	varglobal = 078;
-	return cadena;
+	l2 =  l1;
+	if (l2) l1 = ff (ss);
+	varglobal = 8888;
+	return (ss);
 }
-
-function string funcion (string logico2)
-{	let number var;
-
-  for (logico2='';number1 != number2;number2 = number1){
-	logico1 = number1 != number2;alert(10000);
-  }
-
-  return logico2;
-}
-alert(((ff(funcion(cadena)))));
-
+if (ff(l2)) alert (varglobal);

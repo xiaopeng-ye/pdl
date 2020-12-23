@@ -129,7 +129,7 @@ class JSLexer(Lexer):
         return token
 
     def IDENTIFICADOR(self, token):
-        print(self.gestor_ts.zona_decl)
+        token.index = token.value
         if self.gestor_ts.zona_decl:
             if self.gestor_ts.busca_ts_activa(token.value) is None:
                 token.value = self.gestor_ts.inserta_ts_activa(token.value)

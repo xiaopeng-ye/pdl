@@ -117,12 +117,13 @@ class JSSemantic:
                                     self.lexico.lineno)
         r.linea = u.linea
 
-    def regla_I(self):  # I -> && U
+    def regla_I(self):  # I -> && U I1
+        i1 = self.pila_aux.pop()
         u = self.pila_aux.pop()
         and_ = self.pila_aux.pop()
         i = self.pila_aux[-1]
 
-        if u.tipo == 'logico':
+        if u.tipo == 'logico' and (i1.tipo == 'logico' or i1.tipo == 'vacio'):
             i.tipo = u.tipo
             i.linea = and_.linea
         else:
@@ -308,7 +309,7 @@ class JSSemantic:
             self.gestor_err.imprime('Semántico', 'El tipo de valor asginado son incompatibles', id_.linea)
 
     def regla_N2(self):  # N -> lambda
-        self.pila_aux[-1] = 'ok'
+        self.pila_aux[-1].tipo = 'ok'
 
     def regla_M1(self):  # M -> N
         n = self.pila_aux.pop()
