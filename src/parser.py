@@ -52,7 +52,7 @@ class JSParser:
         self.lexico = JSLexer(gestor_ts, gestor_err)
         js_file = open(self.path, 'r')
         tks = self.lexico.tokenize(js_file.read())
-        semantico = JSSemantic(gestor_ts, gestor_err)
+        semantico = JSSemantic(self.lexico, gestor_ts, gestor_err)
         self.token_file = open('tokens.txt', 'w')
         lista_reglas = ['Descendente']
         # algoritmo del analizador sintactico
@@ -132,9 +132,11 @@ class Simbolo:
 
 
 if __name__ == '__main__':
-    try:
-        parser = JSParser('codigo.js')
-        parser.parse()
-    except Exception as e:
-        print(e, file=sys.stderr)
-        print('Error encontrado', file=sys.stderr)
+    parser = JSParser('codigo.js')
+    parser.parse()
+    # try:
+    #     parser = JSParser('codigo.js')
+    #     parser.parse()
+    # except Exception as e:
+    #     print(e, file=sys.stderr)
+    #     print('Error encontrado', file=sys.stderr)

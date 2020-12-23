@@ -41,13 +41,17 @@ class GestorTablaSimbolo:
         simbolo['despl'] = self.actual.despl
         self.actual.despl += tam
 
-    def aniadir_funcion_ts(self, indice, numParam, tipoParam, tipoRetorno):
+    def aniadir_funcion_ts(self, indice, tipo_param, tipo_retorno):
         simbolo = self.global_.get_simbolo(indice)
         simbolo['tipo'] = 'funcion'
-        simbolo['numParam'] = numParam
-        simbolo['tipoParam'] = tipoParam
-        simbolo['tipoRetorno'] = tipoRetorno
-        simbolo['etiqueta'] = simbolo.lexema
+        if tipo_param != 'vacio':
+            simbolo['tipoParam'] = tipo_param
+            simbolo['numParam'] = len(tipo_param.split(' '))
+        else:
+            simbolo['numParam'] = 0
+        if tipo_retorno != 'vacio':
+            simbolo['tipoRetorno'] = tipo_retorno
+        simbolo['etiqFuncion'] = simbolo.lexema
 
     def buscar_simbolo_ts(self, indice):
         simbolo = self.actual.get_simbolo(indice)
@@ -107,12 +111,16 @@ class Simbolo:
         self._propiedad[key] = value
 
     def __getitem__(self, key):
-        return self._propiedad[key] if key in self._propiedad else None
+        return self._propiedad[key] if key in self._propiedad else 'vacio'
 
     def __str__(self):
-        return f"* LEXEMA : '{self._lexema}'\n  ATRIBUTOS :\n" + ''.join(
+        cadena = f"* LEXEMA : '{self._lexema}'\n  ATRIBUTOS :\n" + ''.join(
             [u"  + {key} : {value}\n".format(key=key, value=("'" + value + "'") if isinstance(value, str) else value)
-             for key, value in self._propiedad.items()])
+             for key, value in self._propiedad.items() if key != 'tipoParam'])
+        if 'tipoParam' in self._propiedad:
+            cadena += ''.join([u"  + tipoParam{i} : {value}\n".format(i=i, value=("'" + value + "'")) for value, i in
+                               zip(self._propiedad['tipoParam'].split(' '), range(1, self._propiedad['numParam'] + 1))])
+        return cadena
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ P -> B P
 P -> F P
 P -> S P
 P -> lambda
-F -> function regla_F1 H ID regla_F2 ( A ) regla_F3 { C regla_F4 } regla_F5
+F -> regla_F1 function H ID regla_F2 ( A ) regla_F3 { C regla_F4 } regla_F5
 C -> B C regla_C1
 C -> S C regla_C1
 C -> lambda regla_C2
@@ -12,9 +12,9 @@ Y -> lambda regla_lambda
 R -> U I regla_R
 I -> && U regla_I
 I -> lambda regla_lambda
-U -> V O regla_O
-O -> != V regla_V
-O -> == V regla_V
+U -> V O regla_U
+O -> != V regla_O
+O -> == V regla_O
 O -> lambda regla_lambda
 V -> W J regla_V
 J -> + W J regla_J

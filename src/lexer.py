@@ -1,3 +1,5 @@
+import sys
+
 from sly import Lexer
 from table import GestorTablaSimbolo
 import re
@@ -137,8 +139,9 @@ class JSLexer(Lexer):
         else:
             indice = self.gestor_ts.busca_ts(token.value)
             if indice is None:
+                print('no declarado', file=sys.stderr)
                 token.value = self.gestor_ts.inserta_ts_global(token.value)
-                self.gestor_ts.aniadir_var_atributos_ts_global(token.value, 'entero', 2)
+                self.gestor_ts.aniadir_var_atributos_ts_global(token.value, 'entero', 1)
             else:
                 token.value = indice
         return token
