@@ -1,11 +1,10 @@
-import sys
-
 from error import GestorError
 from table import GestorTablaSimbolo
 from lexer import JSLexer
 from semantic import JSSemantic
 from collections import deque
 import pandas as pd
+import sys
 
 
 class JSParser:
@@ -62,25 +61,26 @@ class JSParser:
         while True:
             # actualiza la tabla cada iteracion
             gestor_ts.imprime_fichero()
-            print('pila:', end=' ')
-            for el in pila:
-                print(el.type, end=',')
-            print()
 
-            print('pila_aux:', end=' ')
-            for el in semantico.pila_aux:
-                print(el.type, end=',')
-            print()
-            print(x.type)
+            # print('pila:', end=' ')
+            # for el in pila:
+            #     print(el.type, end=',')
+            # print()
+            #
+            # print('pila_aux:', end=' ')
+            # for el in semantico.pila_aux:
+            #     print(el.type, end=',')
+            # print()
+            # print(x.type)
 
             # terminal
             if x.type in self.terminales:
-                print('ejecuta terminal')
+                # print('ejecuta terminal')
                 if x.type == token.type:
                     simbolo = pila.pop()
                     simbolo.linea = token.lineno
                     if token.type == 'ID':
-                        simbolo.lex = token.index
+                        simbolo.lexema = token.index
                         simbolo.pos = token.value
                     semantico.pila_aux.append(simbolo)
                     linea = token.lineno
@@ -90,9 +90,8 @@ class JSParser:
 
             # no terminal
             elif x.type in self.no_terminales:
-                print('ejecuta no terminal')
-                # print(x)
-                print(token.type)
+                # print('ejecuta no terminal')
+                # print(token.type)
                 regla = self.tabla.loc[x.type, token.type]
                 if not pd.isnull(regla):
                     lista_reglas.append(regla)
@@ -105,7 +104,7 @@ class JSParser:
 
             # accion semantica
             else:
-                print('ejecuta accion semantica')
+                # print('ejecuta accion semantica')
                 eval('semantico.' + x.type + '()')
                 pila.pop()
 

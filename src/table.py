@@ -10,7 +10,7 @@ class GestorTablaSimbolo:
         self.zona_decl = False
 
     def crea_tabla(self, indice):
-        self.actual = TablaSimbolo(self.global_.get_simbolo(indice).lexema)
+        self.actual = TablaSimbolo(self.global_.get_simbolo_pos(indice).lexema)
         self.lista_ts.append(self.actual)
 
     def libera_tabla(self):
@@ -30,19 +30,19 @@ class GestorTablaSimbolo:
         return self.global_.insertar_lexema(lexema)
 
     def aniadir_var_atributos_ts_activa(self, indice, tipo, tam):
-        simbolo = self.actual.get_simbolo(indice)
+        simbolo = self.actual.get_simbolo_pos(indice)
         simbolo['tipo'] = tipo
         simbolo['despl'] = self.actual.despl
         self.actual.despl += tam
 
     def aniadir_var_atributos_ts_global(self, indice, tipo, tam):
-        simbolo = self.global_.get_simbolo(indice)
+        simbolo = self.global_.get_simbolo_pos(indice)
         simbolo['tipo'] = tipo
         simbolo['despl'] = self.actual.despl
         self.actual.despl += tam
 
-    def aniadir_funcion_ts(self, indice, tipo_param, tipo_retorno):
-        simbolo = self.global_.get_simbolo(indice)
+    def aniadir_func_atributos_ts(self, indice, tipo_param, tipo_retorno):
+        simbolo = self.global_.get_simbolo_pos(indice)
         simbolo['tipo'] = 'funcion'
         if tipo_param != 'vacio':
             simbolo['tipoParam'] = tipo_param
@@ -53,9 +53,10 @@ class GestorTablaSimbolo:
             simbolo['tipoRetorno'] = tipo_retorno
         simbolo['etiqFuncion'] = simbolo.lexema
 
-    def buscar_simbolo_ts(self, indice):
-        simbolo = self.actual.get_simbolo(indice)
-        return self.global_.get_simbolo(indice) if simbolo is None else simbolo
+    #modificada para buscar con lexema
+    def buscar_simbolo_ts(self, lexema):
+        simbolo = self.actual.get_simbolo_lex(lexema)
+        return self.global_.get_simbolo_lex(lexema) if simbolo is None else simbolo
 
     def imprime_fichero(self):
         with open('tabla_simbolos.txt', 'w') as f:
@@ -88,7 +89,14 @@ class TablaSimbolo:
         else:
             return None
 
-    def get_simbolo(self, indice):
+    #modificado para lexema
+    def get_simbolo_lex(self, lexema):
+        try:
+            return self.simbolos_dict[lexema]
+        except KeyError:
+            return None
+
+    def get_simbolo_pos(self, indice):
         try:
             return self.simbolos_list[indice]
         except IndexError:
@@ -126,7 +134,7 @@ class Simbolo:
 if __name__ == '__main__':
     ts = TablaSimbolo('Global')
     ts.insertar_lexema('factorial')
-    s = ts.get_simbolo(0)
+    s = ts.get_simbolo_lex(0)
     s.nombre = 'hello'
     print(s.nombre)
     s['tipo'] = 'funcion'
@@ -134,7 +142,7 @@ if __name__ == '__main__':
     s['tipoParam'] = 'boolean string'
     # s['tipoParam2'] = 'string'
     ts.insertar_lexema('var2')
-    s = ts.get_simbolo(1)
+    s = ts.get_simbolo_lex(1)
     s['tipo'] = 'entero'
     s['despl'] = 8
     print(ts)

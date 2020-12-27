@@ -1,5 +1,3 @@
-import sys
-
 from sly import Lexer
 from table import GestorTablaSimbolo
 import re
@@ -10,7 +8,6 @@ class JSLexer(Lexer):
     def __init__(self, gestor_ts, gestor_err):
         self.gestor_ts = gestor_ts
         self.gestor_err = gestor_err
-
 
     # String containing ignored characters
     ignore = ' \t'
@@ -139,7 +136,6 @@ class JSLexer(Lexer):
         else:
             indice = self.gestor_ts.busca_ts(token.value)
             if indice is None:
-                print('no declarado', file=sys.stderr)
                 token.value = self.gestor_ts.inserta_ts_global(token.value)
                 self.gestor_ts.aniadir_var_atributos_ts_global(token.value, 'entero', 1)
             else:
@@ -226,11 +222,10 @@ class JSLexer(Lexer):
         print(token)
         t_error = self.gestor_err.error_lexico[token.value[0]]
         if t_error:
-            self.gestor_err.imprime('Léxico',t_error, token.lineno)
+            self.gestor_err.imprime('Léxico', t_error, token.lineno)
         else:
             self.gestor_err.imprime('Léxico', 'Caracter erróneo %r' % token.value[0], token.lineno)
         self.index += 1
-
 
 
 if __name__ == '__main__':
