@@ -9,6 +9,18 @@ class JSSemantic:
         self.gestor_err = gestor_err
         self.pila_aux = deque()
 
+    def regla_P1(self):  # P -> F P
+        self.pila_aux.pop()
+        self.pila_aux.pop()
+
+    def regla_P2(self):  # P -> S P y P -> B P
+        self.pila_aux.pop()
+        sb = self.pila_aux.pop()
+        if sb.ret != 'vacio':
+            self.gestor_err.imprime('Semántico',
+                                    "La sentencia 'return' solo es válido dentro de una función",
+                                    self.lexico.lineno)
+
     def regla_F1(self):  # F -> function
         self.gestor_ts.zona_decl = True
 
@@ -34,7 +46,7 @@ class JSSemantic:
         else:
             f.tipo = 'error'
             self.gestor_err.imprime('Semántico',
-                                    'El retorno de la función no coincide con el valor del return',
+                                    "El tipo de retorno de la función no coincide con el valor del 'return'",
                                     function.linea)
 
     def regla_F5(self):  # F -> function H ID ( A ) { C }
@@ -72,7 +84,7 @@ class JSSemantic:
         else:
             c.ret = 'error'
             self.gestor_err.imprime('Semántico',
-                                    'El retorno de la función no coincide con el valor del return',
+                                    "El tipo de retorno de la función no coincide con el valor del 'return'",
                                     self.lexico.lineno)
 
     def regla_C2(self):  # C -> lambda
@@ -244,7 +256,7 @@ class JSSemantic:
         w = self.pila_aux[-1]
         w.tipo = 'logico'
 
-    def regla_D(self):  # D -> (L)  ##igual G2
+    def regla_D(self):  # D -> (L)  igual G2
         self.pila_aux.pop()
         ll = self.pila_aux.pop()
         self.pila_aux.pop()

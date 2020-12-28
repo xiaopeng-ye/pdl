@@ -44,6 +44,8 @@ class GestorTablaSimbolo:
     def aniadir_func_atributos_ts(self, indice, tipo_param, tipo_retorno):
         simbolo = self.global_.get_simbolo_pos(indice)
         simbolo['tipo'] = 'funcion'
+        simbolo['etiqFuncion'] = simbolo.lexema
+        simbolo['tipoRetorno'] = tipo_retorno
 
         if tipo_param != 'vacio':
             simbolo['tipoParam'] = tipo_param
@@ -51,15 +53,12 @@ class GestorTablaSimbolo:
         else:
             simbolo['numParam'] = 0
 
-        simbolo['tipoRetorno'] = tipo_retorno
-        simbolo['etiqFuncion'] = simbolo.lexema
-
-    #modificada para buscar con lexema
+    # modificada para buscar con lexema
     def buscar_simbolo_ts(self, lexema):
         simbolo = self.actual.get_simbolo_lex(lexema)
         return self.global_.get_simbolo_lex(lexema) if simbolo is None else simbolo
 
-    def imprime_fichero(self):
+    def imprime(self):
         with open('tabla_simbolos.txt', 'w') as f:
             for i, tabla in zip(range(1, len(self.lista_ts) + 1), self.lista_ts):
                 f.write(f"TABLA {tabla.nombre} # {i} :\n")
@@ -90,7 +89,7 @@ class TablaSimbolo:
         else:
             return None
 
-    #modificado para lexema
+    # modificado para lexema
     def get_simbolo_lex(self, lexema):
         try:
             return self.simbolos_dict[lexema]

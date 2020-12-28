@@ -59,9 +59,6 @@ class JSParser:
         token = self.sig_tok(tks)
         x = pila[-1]
         while True:
-            # actualiza la tabla cada iteracion
-            gestor_ts.imprime_fichero()
-
             # print('pila:', end=' ')
             # for el in pila:
             #     print(el.type, end=',')
@@ -86,7 +83,8 @@ class JSParser:
                     linea = token.lineno
                     token = self.sig_tok(tks)
                 else:
-                    gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}', token.lineno if x.type != ';' else linea)
+                    gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}',
+                                       token.lineno if x.type != ';' else linea)
 
             # no terminal
             elif x.type in self.no_terminales:
@@ -100,7 +98,9 @@ class JSParser:
                         if elemento != 'lambda':
                             pila.append(Simbolo(elemento))
                 else:
-                    gestor_err.imprime('Sintáctico', f"No se espera el símbolo '{token.type}'" if token.type != '$' else "Se espera ';'", token.lineno)
+                    gestor_err.imprime('Sintáctico',
+                                       f"No se espera el símbolo '{token.type}'" if token.type != '$' else "Se espera ';'",
+                                       token.lineno)
 
             # accion semantica
             else:
@@ -109,6 +109,9 @@ class JSParser:
                 pila.pop()
 
             x = pila[-1]
+
+            # actualiza la tabla cada iteracion
+            gestor_ts.imprime()
 
             if x.type == '$':
                 break
@@ -119,7 +122,7 @@ class JSParser:
         # cerrar los recursos
         with open('parse.txt', 'w') as f:
             f.write(' '.join(lista_reglas))
-        gestor_ts.imprime_fichero()
+        gestor_ts.imprime()
         js_file.close()
         self.token_file.close()
 

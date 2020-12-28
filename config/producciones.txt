@@ -1,6 +1,6 @@
-P -> B P
-P -> F P
-P -> S P
+P -> B P regla_P2
+P -> F P regla_P1
+P -> S P regla_P2
 P -> lambda
 F -> regla_F1 function H ID regla_F2 ( A ) regla_F3 { C regla_F4 } regla_F5
 C -> B C regla_C1

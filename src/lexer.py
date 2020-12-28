@@ -237,6 +237,6 @@ if __name__ == '__main__':
     for token in lexer.tokenize(js_file.read()):
         token_file.write(f'<{token.type},{token.value}>\n')
 
-    ts.imprime_fichero()
+    ts.imprime()
     token_file.close()
     js_file.close()
