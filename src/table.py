@@ -44,13 +44,14 @@ class GestorTablaSimbolo:
     def aniadir_func_atributos_ts(self, indice, tipo_param, tipo_retorno):
         simbolo = self.global_.get_simbolo_pos(indice)
         simbolo['tipo'] = 'funcion'
+
         if tipo_param != 'vacio':
             simbolo['tipoParam'] = tipo_param
             simbolo['numParam'] = len(tipo_param.split(' '))
         else:
             simbolo['numParam'] = 0
-        if tipo_retorno != 'vacio':
-            simbolo['tipoRetorno'] = tipo_retorno
+
+        simbolo['tipoRetorno'] = tipo_retorno
         simbolo['etiqFuncion'] = simbolo.lexema
 
     #modificada para buscar con lexema

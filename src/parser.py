@@ -11,11 +11,11 @@ class JSParser:
 
     def __init__(self, path):
         self.path = path
-        self.tabla = pd.read_csv('descendente_tabular.csv', index_col=0, dtype=str)
+        self.tabla = pd.read_csv('config/descendente_tabular.csv', index_col=0, dtype=str)
         self.producciones = ['vacia']
         self.token_file = None
         self.lexico = None
-        with open('producciones.txt', 'r') as f:
+        with open('config/producciones.txt', 'r') as f:
             for line in f:
                 self.producciones.append(line.strip())
 
@@ -125,18 +125,18 @@ class JSParser:
 
 
 class Simbolo:
-    # __slots__ = ('type', 'tipo', 'ret', 'ancho', 'pos')
+    # __slots__ = ('type', 'tipo', 'ret', 'ancho', 'pos', 'lexema')
 
     def __init__(self, valor):
         self.type = valor
 
 
 if __name__ == '__main__':
-    parser = JSParser('codigo.js')
-    parser.parse()
-    # try:
-    #     parser = JSParser('codigo.js')
-    #     parser.parse()
-    # except Exception as e:
-    #     print(e, file=sys.stderr)
-    #     print('Error encontrado', file=sys.stderr)
+    # parser = JSParser('codigo.js')
+    # parser.parse()
+    try:
+        parser = JSParser('codigo.js')
+        parser.parse()
+    except Exception as e:
+        print(e, file=sys.stderr)
+        print('Error encontrado', file=sys.stderr)
