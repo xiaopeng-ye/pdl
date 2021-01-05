@@ -11,11 +11,11 @@ class JSParser:
 
     def __init__(self, path):
         self.path = path
-        self.tabla = pd.read_csv('config/descendente_tabular.csv', index_col=0, dtype=str)
+        self.tabla = pd.read_csv('../config/descendente_tabular.csv', index_col=0, dtype=str)
         self.producciones = ['vacia']
         self.token_file = None
         self.lexico = None
-        with open('config/producciones.txt', 'r') as f:
+        with open('../config/producciones.txt', 'r') as f:
             for line in f:
                 self.producciones.append(line.strip())
 
@@ -52,7 +52,7 @@ class JSParser:
         js_file = open(self.path, 'r')
         tks = self.lexico.tokenize(js_file.read())
         semantico = JSSemantic(self.lexico, gestor_ts, gestor_err)
-        self.token_file = open('tokens.txt', 'w')
+        self.token_file = open('../tokens.txt', 'w')
         lista_reglas = ['Descendente']
         # algoritmo del analizador sintactico
         pila = deque([Simbolo('$'), Simbolo('P')])
@@ -119,7 +119,7 @@ class JSParser:
             print('Correcto')
 
         # cerrar los recursos
-        with open('parse.txt', 'w') as f:
+        with open('../parse.txt', 'w') as f:
             f.write(' '.join(lista_reglas))
         gestor_ts.imprime()
         js_file.close()
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     # parser = JSParser('codigo.js')
     # parser.parse()
     try:
-        parser = JSParser('codigo.js')
+        parser = JSParser('../codigo.js')
         parser.parse()
     except Exception as e:
         print(e, file=sys.stderr)
