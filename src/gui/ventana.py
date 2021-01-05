@@ -1,3 +1,4 @@
+import sys
 from PyQt5.QtWidgets import QFileDialog
 from src.gui.ventana_ui import *
 
@@ -32,7 +33,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Pasar la ruta del fichero
         text = self.textEdit.toPlainText()
         if text == '':
-            print('Error, fichero no especificado')
+            print('Error, fichero no especificado', file=sys.stderr)
         else:
             print(text)
             self.close()
