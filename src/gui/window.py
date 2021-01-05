@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QFileDialog
-from src.gui.ventana_ui import *
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-route = None
+from parse import JSParser
+from src.gui.window_ui import *
+
+route = ''
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -20,22 +22,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def openFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        file, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
-                                              "All Files (*);;Python Files (*.py)", options=options)
+        file, _ = QFileDialog.getOpenFileName(self, "Seleccione el código fuente", "",
+                                              "All Files (*);;JavaScript Files (*.js)", options=options)
         if file:
-            # print(fileName)
             self.textEdit.setPlainText(file)
             global route
             route = file
+        else:
+            self.textEdit.setPlainText('')
 
     def save(self):
-        # Pasar la ruta del fichero
-        text = self.textEdit.toPlainText()
-        if text == '':
-            print('Error, fichero no especificado', file=sys.stderr)
+        ruta = self.textEdit.toPlainText()
+        if ruta == '':
+            QMessageBox.about(self, "Alert", 'La ruta es vacía')
         else:
-            print(text)
-            self.close()
+            try:
+                parser = JSParser(ruta)
+                parser.parse()
+                QMessageBox.about(self, "Info", 'Correcto')
+            except FileNotFoundError as fe:
+                QMessageBox.about(self, "Alert", f'No existe el fichero {fe.filename}')
+            except Exception as e:
+                QMessageBox.about(self, "Alert", f'Error encontrado\n{e}')
 
     # def openFileNamesDialog(self):
     #     options = QFileDialog.Options()
