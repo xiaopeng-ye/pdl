@@ -77,7 +77,6 @@ class JSParser:
                     simbolo = pila.pop()
                     simbolo.linea = token.lineno
                     if token.type == 'ID':
-                        simbolo.lexema = token.index
                         simbolo.pos = token.value
                     semantico.pila_aux.append(simbolo)
                     linea = token.lineno
@@ -117,7 +116,7 @@ class JSParser:
                 break
 
         if token.type == x.type:
-            print('Accepted')
+            print('Correcto')
 
         # cerrar los recursos
         with open('parse.txt', 'w') as f:

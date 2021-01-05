@@ -204,7 +204,7 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         self.pila_aux.pop()
         w = self.pila_aux[-1]
-        if self.gestor_ts.buscar_simbolo_ts(id_.lexema)['tipo'] == 'entero':
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'entero':
             w.tipo = 'entero'
         else:
             w.tipo = 'error'
@@ -223,7 +223,7 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         w = self.pila_aux[-1]
 
-        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.lexema)
+        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
         if d.tipo == 'vacio':
             if id_simbolo['tipo'] != 'funcion':
                 w.tipo = id_simbolo['tipo']
@@ -321,7 +321,7 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         n = self.pila_aux[-1]
 
-        if self.gestor_ts.buscar_simbolo_ts(id_.lexema)['tipo'] == e.tipo:
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == e.tipo:
             n.tipo = 'ok'
         else:
             n.tipo = 'error'
@@ -340,7 +340,7 @@ class JSSemantic:
         elem = self.pila_aux.pop()
         m = self.pila_aux[-1]
 
-        if self.gestor_ts.buscar_simbolo_ts(id_.lexema)['tipo'] == 'entero':
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'entero':
             m.tipo = 'ok'
         else:
             m.tipo = 'error'
@@ -352,7 +352,7 @@ class JSSemantic:
         id_ = self.pila_aux.pop()
         s = self.pila_aux[-1]
 
-        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.lexema)
+        id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
         if id_simbolo['tipo'] == 'funcion':
             if id_simbolo['tipoParam'] == g.tipo:
                 s.tipo = 'ok'
@@ -372,7 +372,7 @@ class JSSemantic:
         self.pila_aux.pop()
         s = self.pila_aux[-1]
 
-        if self.gestor_ts.buscar_simbolo_ts(id_.lexema)['tipo'] == 'entero':
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'entero':
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
@@ -400,7 +400,7 @@ class JSSemantic:
         self.pila_aux.pop()
         s = self.pila_aux[-1]
 
-        if self.gestor_ts.buscar_simbolo_ts(id_.lexema)['tipo'] == 'logico':
+        if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'logico':
             s.tipo = 'error'
             self.gestor_err.imprime('Semántico', 'No se admite una variable de tipo lógico', id_.linea)
         else:
