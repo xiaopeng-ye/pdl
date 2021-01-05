@@ -14,6 +14,9 @@ class Ui_MainWindow(object):
         MainWindow.resize(770, 180)
         MainWindow.setMinimumSize(QtCore.QSize(0, 0))
         MainWindow.setMaximumSize(QtCore.QSize(770, 450))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("../../../../../../../../Pictures/Clase/PDL/0.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.frame = QtWidgets.QFrame(self.centralwidget)
@@ -28,7 +31,7 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.QRuta = QtWidgets.QLabel(self.frame)
-        self.QRuta.setGeometry(QtCore.QRect(20, 20, 60, 40))
+        self.QRuta.setGeometry(QtCore.QRect(20, 20, 151, 40))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.QRuta.setFont(font)
@@ -61,8 +64,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.QRuta.setText(_translate("MainWindow", "Ruta:"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Procesadores de Lenguajes"))
+        self.QRuta.setText(_translate("MainWindow", "Ruta del código:"))
         self.BAceptar.setText(_translate("MainWindow", "Aceptar"))
         self.BBuscar.setText(_translate("MainWindow", "Buscar..."))
         self.BCancelar.setText(_translate("MainWindow", "Cancelar"))
