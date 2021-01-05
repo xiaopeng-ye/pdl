@@ -1,4 +1,3 @@
-import sys
 from PyQt5.QtWidgets import QFileDialog
 from src.gui.ventana_ui import *
 
