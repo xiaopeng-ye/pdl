@@ -19,7 +19,7 @@ class JSSemantic:
         if sb.ret != 'vacio':
             self.gestor_err.imprime('Semántico',
                                     "La sentencia 'return' solo es válido dentro de una función",
-                                    self.lexico.lineno)
+                                    self.lexico.linea)
 
     def regla_F1(self):  # F -> function
         self.gestor_ts.zona_decl = True
@@ -85,7 +85,7 @@ class JSSemantic:
             c.ret = 'error'
             self.gestor_err.imprime('Semántico',
                                     "El tipo de retorno de la función no coincide con el valor del 'return'",
-                                    self.lexico.lineno)
+                                    self.lexico.linea)
 
     def regla_C2(self):  # C -> lambda
         c = self.pila_aux[-1]
@@ -102,7 +102,7 @@ class JSSemantic:
         else:
             e.tipo = 'error'
             self.gestor_err.imprime('Semántico',
-                                    "El tipo de los operandos del operador '||' no coincide", self.lexico.lineno)
+                                    "El tipo de los operandos del operador '||' no coincide", self.lexico.linea)
 
     def regla_Y(self):  # Y -> || R Y1
         y1 = self.pila_aux.pop()
@@ -128,7 +128,7 @@ class JSSemantic:
         else:
             r.tipo = 'error'
             self.gestor_err.imprime('Semántico',
-                                    "El tipo de los operandos del operador '&&' no coincide", self.lexico.lineno)
+                                    "El tipo de los operandos del operador '&&' no coincide", self.lexico.linea)
 
     def regla_I(self):  # I -> && U I1
         i1 = self.pila_aux.pop()
@@ -157,7 +157,7 @@ class JSSemantic:
             u.tipo = 'error'
             self.gestor_err.imprime('Semántico',
                                     "El tipo de los operandos del operador de realación no coincide",
-                                    self.lexico.lineno)
+                                    self.lexico.linea)
 
     def regla_O(self):  # O -> != V y O -> == V
         v = self.pila_aux.pop()
@@ -184,7 +184,7 @@ class JSSemantic:
             v.tipo = 'error'
             self.gestor_err.imprime('Semántico',
                                     "El tipo de los operandos del operador aritmético deben ser enteros",
-                                    self.lexico.lineno)
+                                    self.lexico.linea)
 
     def regla_J(self):  # J -> + W J1  y J -> - W J1
         j1 = self.pila_aux.pop()

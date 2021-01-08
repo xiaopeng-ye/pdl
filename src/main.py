@@ -7,8 +7,8 @@ if __name__ == '__main__':
         exit(1)
 
     try:
-        parser = JSParser(sys.argv[1])
-        parser.parse()
+        parser = JSParser()
+        parser.parse(sys.argv[1])
     except FileNotFoundError as fe:
         print(f'No existe el fichero {fe.filename}', file=sys.stderr)
     except Exception as e:

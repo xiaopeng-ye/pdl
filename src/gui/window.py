@@ -19,6 +19,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Guardar
         # self.BOk.clicked.connect(self.saveFileDialog)
 
+        # parser
+        self.parser = JSParser()
+
     def openFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -37,8 +40,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QMessageBox.about(self, "Alert", 'La ruta es vacía')
         else:
             try:
-                parser = JSParser(ruta)
-                parser.parse()
+                self.parser.parse(ruta)
                 QMessageBox.about(self, "Info", 'Correcto')
             except FileNotFoundError as fe:
                 QMessageBox.about(self, "Alert", f'No existe el fichero {fe.filename}')

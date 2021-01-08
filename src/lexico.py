@@ -5,9 +5,9 @@ from table import GestorTablaSimbolo
 
 class JSLexer:
 
-    def __init__(self, path, gestor_ts, gestor_err):
-        self.code_file = open(path, 'r', encoding='UTF-8')
-        self.linea = 1
+    def __init__(self, gestor_ts, gestor_err):
+        self.code_file = None
+        self.linea = None
         self.gestor_ts = gestor_ts
         self.gestor_err = gestor_err
         self.tabla = pd.read_csv('../config/lexico_tabla.csv', index_col=0, dtype=str)
@@ -33,7 +33,9 @@ class JSLexer:
         else:
             return 40
 
-    def tokenize(self):
+    def tokenize(self, path):
+        self.code_file = open(path, 'r', encoding='UTF-8')
+        self.linea = 1
         char = self.next_char()
         while char:
             estado = 0
@@ -165,6 +167,7 @@ class Token:
 if __name__ == '__main__':
     ts = GestorTablaSimbolo()
     err = GestorError()
-    lexer = JSLexer('../codigo.js', ts, err)
-    for token in lexer.tokenize():
+    lexer = JSLexer(ts, err)
+    for token in lexer.tokenize('../codigo.js'):
         print(token, 'linea', token.linea)
+    ts.imprime()
