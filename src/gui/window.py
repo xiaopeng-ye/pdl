@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from parse import JSParser
-from src.gui.window_ui import *
+from gui.window_ui import *
 
 route = ''
 
