@@ -52,7 +52,7 @@ class JSParser:
         js_file = open(self.path, 'r')
         tks = self.lexico.tokenize(js_file.read())
         semantico = JSSemantic(self.lexico, gestor_ts, gestor_err)
-        self.token_file = open('../tokens.txt', 'w')
+        self.token_file = open('tokens.txt', 'w')
         lista_reglas = ['Descendente']
         # algoritmo del analizador sintactico
         pila = deque([Simbolo('$'), Simbolo('P')])
@@ -119,7 +119,7 @@ class JSParser:
             print('Correcto')
 
         # cerrar los recursos
-        with open('../parse.txt', 'w') as f:
+        with open('parse.txt', 'w') as f:
             f.write(' '.join(lista_reglas))
         gestor_ts.imprime()
         js_file.close()

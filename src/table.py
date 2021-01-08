@@ -63,7 +63,7 @@ class GestorTablaSimbolo:
         return self.global_.get_simbolo(indice) if simbolo is None else simbolo
 
     def imprime(self):
-        with open('../tabla_simbolos.txt', 'w') as f:
+        with open('tabla_simbolos.txt', 'w') as f:
             for i, tabla in zip(range(1, len(self.lista_ts) + 1), self.lista_ts):
                 f.write(f"TABLA {tabla.nombre} # {i} :\n")
                 f.write(str(tabla))
