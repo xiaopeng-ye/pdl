@@ -6,15 +6,17 @@ from collections import deque
 import pandas as pd
 import sys
 
+from util import resource_path
+
 
 class JSParser:
 
     def __init__(self):
-        self.tabla = pd.read_csv('../config/descendente_tabular.csv', index_col=0, dtype=str)
+        self.tabla = pd.read_csv(resource_path('config/descendente_tabular.csv'), index_col=0, dtype=str)
         self.producciones = ['vacia']
         self.token_file = None
         self.lexico = None
-        with open('../config/producciones.txt', 'r') as f:
+        with open(resource_path('config/producciones.txt'), 'r') as f:
             for line in f:
                 self.producciones.append(line.strip())
 

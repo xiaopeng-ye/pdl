@@ -1,6 +1,7 @@
 import pandas as pd
 from error import GestorError
 from table import GestorTablaSimbolo
+from util import resource_path
 
 
 class JSLexer:
@@ -10,7 +11,7 @@ class JSLexer:
         self.linea = None
         self.gestor_ts = gestor_ts
         self.gestor_err = gestor_err
-        self.tabla = pd.read_csv('../config/lexico_tabla.csv', index_col=0, dtype=str)
+        self.tabla = pd.read_csv(resource_path('config/lexico_tabla.csv'), index_col=0, dtype=str)
         self._cast_columns_name = {'_': 4, ' ': 6, '\n': 38, '\t': 6, "'": 8, '\\': 10, '+': 12, '-': 14, '/': 16,
                                    '=': 18, '!': 20, '&': 22, '|': 24, ';': 26, ',': 28, '(': 30, ')': 32, '{': 34,
                                    '}': 36}
