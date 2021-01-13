@@ -326,7 +326,7 @@ class JSSemantic:
             n.tipo = 'ok'
         else:
             n.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'El tipo de valor asginado son incompatibles', id_.linea)  # 216
+            self.gestor_err.imprime('Semántico', 'El tipo de valor asignado es incompatible con el tipo de la variable',id_.linea)  # 216
 
     def regla_N2(self):  # N -> lambda
         self.pila_aux[-1].tipo = 'ok'
