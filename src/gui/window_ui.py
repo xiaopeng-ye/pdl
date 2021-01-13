@@ -12,8 +12,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(770, 180)
-        MainWindow.setMinimumSize(QtCore.QSize(0, 0))
-        MainWindow.setMaximumSize(QtCore.QSize(770, 450))
+        MainWindow.setMinimumSize(QtCore.QSize(770, 180))
+        MainWindow.setMaximumSize(QtCore.QSize(770, 180))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("../../../../../../../../Pictures/Clase/PDL/0.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -70,14 +70,4 @@ class Ui_MainWindow(object):
         self.BBuscar.setText(_translate("MainWindow", "Buscar..."))
         self.BCancelar.setText(_translate("MainWindow", "Cancelar"))
         self.textEdit.setPlaceholderText(_translate("MainWindow", "Escriba o busque una ruta"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 
