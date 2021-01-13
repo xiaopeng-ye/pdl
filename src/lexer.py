@@ -42,14 +42,14 @@ class JSLexer(Lexer):
             return token
         else:
             self.gestor_err.imprime('Léxico', 'Tamaño de constante inválido, debe corresponder a un número de 16 bits',
-                                    token.lineno)
+                                    token.lineno)  # 108
             # print('Línea %d: Valor incorrecto, debe corresponder a un número de 16 bits' % self.lineno)
 
     @_(r"'.*'")
     def CADENA(self, token):
         if len(token.value) > 64:
             self.gestor_err.imprime('Léxico', 'Tamaño de cadena inválido, debe ser menor de 64 caracteres',
-                                    token.lineno)
+                                    token.lineno)  # 109
         token.value = u'"{cadena}"'.format(cadena=token.value[1:-1])
         token.value = re.sub(r"\\\'", "'", token.value)
         token.value = re.sub(r'\\\\', r'\\', token.value)
@@ -131,7 +131,7 @@ class JSLexer(Lexer):
                 token.value = self.gestor_ts.inserta_ts_activa(token.value)
             else:
                 token.value = None
-                self.gestor_err.imprime('Semántico', 'Ya existe el identificador a declarar', token.lineno)
+                self.gestor_err.imprime('Semántico', 'Ya existe el identificador a declarar', token.lineno)  # 107
         else:
             indice = self.gestor_ts.busca_ts(token.value)
             if indice is None:
@@ -223,7 +223,7 @@ class JSLexer(Lexer):
         if t_error:
             self.gestor_err.imprime('Léxico', t_error, token.lineno)
         else:
-            self.gestor_err.imprime('Léxico', 'Caracter erróneo %r' % token.value[0], token.lineno)
+            self.gestor_err.imprime('Léxico', 'Caracter erróneo %r' % token.value[0], token.lineno)  # 101
         self.index += 1
 
 

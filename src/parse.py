@@ -79,7 +79,7 @@ class JSParser:
                     token = self.sig_tok(tks)
                 else:
                     gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}',
-                                       token.linea if x.type != ';' else linea)
+                                       token.linea if x.type != ';' else linea)  #150
 
             # no terminal
             elif x.type in self.no_terminales:
@@ -95,7 +95,7 @@ class JSParser:
                 else:
                     gestor_err.imprime('Sintáctico',
                                        f"No se espera el símbolo '{token.tipo}'" if token.tipo != '$' else "Se espera ';'",
-                                       token.linea)
+                                       token.linea)  # 151
 
             # accion semantica
             else:
