@@ -95,8 +95,16 @@ class JSParser:
                         if elemento != 'lambda':
                             pila.append(Simbolo(elemento))
                 else:
+                    if token.tipo == 'ENTERO':
+                        cadena = f"el constante {token.atributo}"
+                    elif token.tipo == 'CADENA':
+                        cadena = f"la cadena {token.atributo}"
+                    elif token.tipo == 'ID':
+                        cadena = f"la variable '{gestor_ts.buscar_simbolo_ts(token.atributo).lexema}'"
+                    else:
+                        cadena = f"el símbolo '{token.tipo}'"
                     gestor_err.imprime('Sintáctico',
-                                       f"No se espera el símbolo '{token.tipo}'" if token.tipo != '$' else "Se espera ';'",
+                                       f"No se espera {cadena}" if token.tipo != '$' else "Se espera ';'",
                                        token.linea)  # 151
 
             # accion semantica
@@ -131,11 +139,11 @@ class Simbolo:
 
 
 if __name__ == '__main__':
-    # parser = JSParser()
-    # parser.parse('../codigo.js')
-    try:
-        parser = JSParser()
-        parser.parse('../codigo.js')
-    except Exception as e:
-        print(e, file=sys.stderr)
-        print('Error encontrado', file=sys.stderr)
+    parser = JSParser()
+    parser.parse('../codigo.js')
+    # try:
+    #     parser = JSParser()
+    #     parser.parse('../codigo.js')
+    # except Exception as e:
+    #     print(e, file=sys.stderr)
+    #     print('Error encontrado', file=sys.stderr)

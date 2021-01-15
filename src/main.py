@@ -4,7 +4,7 @@ from parse import JSParser
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Uso: programa.exe [ruta del código]', file=sys.stderr)
-        exit(1)
+        sys.exit(1)
 
     try:
         parser = JSParser()

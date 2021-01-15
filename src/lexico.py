@@ -73,7 +73,7 @@ class JSLexer:
                                 indice = self.gestor_ts.inserta_ts_activa(lexema)
                             else:
                                 self.gestor_err.imprime('Semántico', 'Ya existe el identificador a declarar',
-                                                        token.lineno)
+                                                        self.linea)
                         else:
                             indice = self.gestor_ts.busca_ts(lexema)
                             if indice is None:
