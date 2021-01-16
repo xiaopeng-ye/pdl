@@ -112,7 +112,6 @@ class JSSemantic:
 
         if r.tipo == 'logico' and (y1.tipo == 'logico' or y1.tipo == 'vacio'):
             y.tipo = 'logico'
-            y.linea = operador.linea
         else:
             y.tipo = 'error'
             self.gestor_err.imprime('Semántico',
@@ -139,7 +138,6 @@ class JSSemantic:
 
         if u.tipo == 'logico' and (i1.tipo == 'logico' or i1.tipo == 'vacio'):
             i.tipo = u.tipo
-            i.linea = and_.linea
         else:
             i.tipo = 'error'
             self.gestor_err.imprime('Semántico',
@@ -160,14 +158,14 @@ class JSSemantic:
                                     "El tipo de los operandos del operador de realación no coincide",
                                     self.lexico.linea)  # 206
 
-    def regla_O(self):  # O -> != V y O -> == V
+    def regla_O(self):  # O -> != V O y O -> == V O
+        o1 = self.pila_aux.pop()
         v = self.pila_aux.pop()
         comparacion = self.pila_aux.pop()
         o = self.pila_aux[-1]
 
-        if v.tipo == 'entero':
-            o.tipo = v.tipo
-            o.linea = comparacion.linea
+        if v.tipo == 'entero' and (o1.tipo == 'entero' or o1.tipo == 'vacio'):
+            o.tipo = 'entero'
         else:
             o.tipo = 'error'
             self.gestor_err.imprime('Semántico',
@@ -326,7 +324,8 @@ class JSSemantic:
             n.tipo = 'ok'
         else:
             n.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'El tipo de valor asignado es incompatible con el tipo de la variable',id_.linea)  # 216
+            self.gestor_err.imprime('Semántico', 'El tipo de valor asignado es incompatible con el tipo de la variable',
+                                    id_.linea)  # 216
 
     def regla_N2(self):  # N -> lambda
         self.pila_aux[-1].tipo = 'ok'

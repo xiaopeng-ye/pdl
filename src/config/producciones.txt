@@ -13,8 +13,8 @@ R -> U I regla_R
 I -> && U I regla_I
 I -> lambda regla_lambda
 U -> V O regla_U
-O -> != V regla_O
-O -> == V regla_O
+O -> != V O regla_O
+O -> == V O regla_O
 O -> lambda regla_lambda
 V -> W J regla_V
 J -> + W J regla_J

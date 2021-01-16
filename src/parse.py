@@ -59,19 +59,19 @@ class JSParser:
         while True:
             # print('pila:', end=' ')
             # for el in pila:
-            #     print(el.type, end=',')
+            #     print(el.valor, end=',')
             # print()
             #
             # print('pila_aux:', end=' ')
             # for el in semantico.pila_aux:
-            #     print(el.type, end=',')
+            #     print(el.valor, end=',')
             # print()
-            # print(x.type)
+            # print(x.valor)
 
             # terminal
-            if x.type in self.terminales:
+            if x.valor in self.terminales:
                 # print('ejecuta terminal')
-                if x.type == token.tipo:
+                if x.valor == token.tipo:
                     simbolo = pila.pop()
                     simbolo.linea = token.linea
                     if token.tipo == 'ID':
@@ -80,14 +80,22 @@ class JSParser:
                     linea = token.linea
                     token = self.sig_tok(tks)
                 else:
-                    gestor_err.imprime('Sintáctico', f'Se espera el símbolo {x.type}',
-                                       token.linea if x.type != ';' else linea)  #150
+                    if x.valor == 'ENTERO':
+                        cadena = f"un constante"
+                    elif x.valor == 'CADENA':
+                        cadena = f"una cadena"
+                    elif x.valor == 'ID':
+                        cadena = f"una variable"
+                    else:
+                        cadena = f"un '{x.valor}'"
+                    gestor_err.imprime('Sintáctico', f"Se espera {cadena}",
+                                       token.linea if x.valor != ';' else linea)  # 150
 
             # no terminal
-            elif x.type in self.no_terminales:
+            elif x.valor in self.no_terminales:
                 # print('ejecuta no terminal')
-                # print(token.type)
-                regla = self.tabla.loc[x.type, token.tipo]
+                # print(token.valor)
+                regla = self.tabla.loc[x.valor, token.tipo]
                 if not pd.isnull(regla):
                     lista_reglas.append(regla)
                     semantico.pila_aux.append(pila.pop())
@@ -102,7 +110,7 @@ class JSParser:
                     elif token.tipo == 'ID':
                         cadena = f"la variable '{gestor_ts.buscar_simbolo_ts(token.atributo).lexema}'"
                     else:
-                        cadena = f"el símbolo '{token.tipo}'"
+                        cadena = f"el '{token.tipo}'"
                     gestor_err.imprime('Sintáctico',
                                        f"No se espera {cadena}" if token.tipo != '$' else "Se espera ';'",
                                        token.linea)  # 151
@@ -110,7 +118,7 @@ class JSParser:
             # accion semantica
             else:
                 # print('ejecuta accion semantica')
-                eval('semantico.' + x.type + '()')
+                eval('semantico.' + x.valor + '()')
                 pila.pop()
 
             x = pila[-1]
@@ -118,10 +126,10 @@ class JSParser:
             # actualiza la tabla cada iteracion
             gestor_ts.imprime()
 
-            if x.type == '$':
+            if x.valor == '$':
                 break
 
-        if token.tipo == x.type:
+        if token.tipo == x.valor:
             print('Correcto')
 
         # cerrar los recursos
@@ -132,10 +140,10 @@ class JSParser:
 
 
 class Simbolo:
-    # __slots__ = ('type', 'tipo', 'ret', 'ancho', 'pos', 'lexema')
+    # __slots__ = ('valor', 'tipo', 'ret', 'ancho', 'pos', 'lexema')
 
     def __init__(self, valor):
-        self.type = valor
+        self.valor = valor
 
 
 if __name__ == '__main__':
