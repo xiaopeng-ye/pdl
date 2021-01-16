@@ -89,7 +89,7 @@ class JSLexer:
                     char = self.next_char()
                 elif accion == 'G':
                     valor = int(valor)
-                    if 32767 >= valor >= -32767:
+                    if 32767 >= valor >= 0:
                         yield Token('ENTERO', valor, self.linea)
                     else:
                         self.gestor_err.imprime('Léxico', self.gestor_err.error_lexico[108], self.linea)
