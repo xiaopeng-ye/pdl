@@ -87,7 +87,7 @@ class JSParser:
                     elif x.valor == 'ID':
                         cadena = f"una variable"
                     else:
-                        cadena = f"un '{x.valor}'"
+                        cadena = f"'{x.valor}'"
                     gestor_err.imprime('Sintáctico', f"Se espera {cadena}",
                                        token.linea if x.valor != ';' else linea)  # 150
 
@@ -110,7 +110,7 @@ class JSParser:
                     elif token.tipo == 'ID':
                         cadena = f"la variable '{gestor_ts.buscar_simbolo_ts(token.atributo).lexema}'"
                     else:
-                        cadena = f"el '{token.tipo}'"
+                        cadena = f"'{token.tipo}'"
                     gestor_err.imprime('Sintáctico',
                                        f"No se espera {cadena}" if token.tipo != '$' else "Se espera ';'",
                                        token.linea)  # 151

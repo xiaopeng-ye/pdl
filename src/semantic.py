@@ -155,7 +155,7 @@ class JSSemantic:
         else:
             u.tipo = 'error'
             self.gestor_err.imprime('Semántico',
-                                    "El tipo de los operandos del operador de realación no coincide",
+                                    "El tipo de los operandos del operador de relación no coincide",
                                     self.lexico.linea)  # 206
 
     def regla_O(self):  # O -> != V O y O -> == V O
