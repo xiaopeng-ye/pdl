@@ -123,8 +123,10 @@ class JSParser:
 
             x = pila[-1]
 
-            # actualiza la tabla cada iteracion
+            # actualiza la tabla y parse cada iteracion
             gestor_ts.imprime()
+            with open('parse.txt', 'w') as f:
+                f.write(' '.join(lista_reglas))
 
             if x.valor == '$':
                 break
