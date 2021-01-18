@@ -353,7 +353,6 @@ class JSSemantic:
         s = self.pila_aux[-1]
 
         id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
-        print(id_simbolo)
         if id_simbolo['tipo'] == 'funcion':
             if id_simbolo['tipoParam'] == g.tipo:
                 s.tipo = 'ok'
