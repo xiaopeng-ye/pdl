@@ -45,7 +45,8 @@ class JSLexer:
                 transicion = self.tabla.iloc[estado, pos]
                 accion = self.tabla.iloc[estado, pos + 1]
                 if pd.isnull(transicion):
-                    self.gestor_err.imprime('Léxico', self.gestor_err.error_lexico[int(accion)], self.linea)
+                    self.gestor_err.imprime('Léxico', self.gestor_err.error_lexico[int(accion)] + (f" '{char}'" if int(
+                        accion) == 101 else ''), self.linea)
                     char = None
                     break
                 estado = int(transicion)
