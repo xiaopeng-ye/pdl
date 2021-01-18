@@ -48,9 +48,9 @@ class JSSemantic:
             self.gestor_err.imprime('Semántico',
                                     "El tipo de retorno de la función no coincide con el valor del 'return'",
                                     function.linea)  # 201
+        self.gestor_ts.libera_tabla()
 
     def regla_F5(self):  # F -> function H ID ( A ) { C }
-        self.gestor_ts.libera_tabla()
         self.pila_aux.pop()
         self.pila_aux.pop()
         self.pila_aux.pop()
