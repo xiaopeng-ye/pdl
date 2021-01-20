@@ -224,20 +224,24 @@ class JSSemantic:
 
         id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
         if id_simbolo['tipo'] != 'funcion':
-            if d.tipo == 'vacio':
+            if d.tipo == 'ok':
                 w.tipo = id_simbolo['tipo']
             else:
                 w.tipo = 'error'
-                self.gestor_err.imprime('Semántico', 'El identificador corresponde a una variable', id_.linea)  # 211
+                self.gestor_err.imprime('Semántico',
+                                        f"El identificador '{id_simbolo.lexema}' corresponde a una variable",
+                                        id_.linea)  # 213
         else:
             if id_simbolo['tipoParam'] == d.tipo:
                 w.tipo = id_simbolo['tipoRetorno']
+            elif d.tipo == 'ok':
+                w.tipo = 'error'
+                self.gestor_err.imprime('Semántico',
+                                        f"El identificador '{id_simbolo.lexema}' corresponde a una función",
+                                        id_.linea)  # 211
             else:
                 w.tipo = 'error'
                 self.gestor_err.imprime('Semántico', 'Los tipos de los parámetros no coinciden', id_.linea)  # 212
-            # else:
-            #     w.tipo = 'error'
-            #     self.gestor_err.imprime('Semántico', 'El identificador corresponde a una función', id_.linea)  # 213
 
     def regla_W4(self):  # W-> entero
         self.pila_aux.pop()
@@ -254,12 +258,16 @@ class JSSemantic:
         w = self.pila_aux[-1]
         w.tipo = 'logico'
 
-    def regla_D(self):  # D -> (L)  igual G2
+    def regla_D(self):  # D -> (L) igual G2
         self.pila_aux.pop()
         ll = self.pila_aux.pop()
         self.pila_aux.pop()
         d = self.pila_aux[-1]
         d.tipo = ll.tipo
+
+    def regla_D1(self):  # D -> lambda
+        d = self.pila_aux[-1]
+        d.tipo = 'ok'
 
     def regla_B1_1(self):  # B -> let
         self.gestor_ts.zona_decl = True

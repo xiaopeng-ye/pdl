@@ -28,7 +28,7 @@ W -> CADENA regla_W5
 W -> true regla_W6
 W -> false regla_W6
 D -> ( L ) regla_D
-D -> lambda regla_lambda
+D -> lambda regla_D1
 B -> let regla_B1_1 T ID regla_B1_3 ; regla_B1_2
 B -> if ( E ) S regla_B2
 B -> for ( N ; E ; M ) { C } regla_B3
