@@ -1,5 +1,3 @@
-import sys
-
 from sly import Lexer
 from table import GestorTablaSimbolo
 import re
@@ -10,7 +8,6 @@ class JSLexer(Lexer):
     def __init__(self, gestor_ts, gestor_err):
         self.gestor_ts = gestor_ts
         self.gestor_err = gestor_err
-
 
     # String containing ignored characters
     ignore = ' \t'
@@ -45,14 +42,14 @@ class JSLexer(Lexer):
             return token
         else:
             self.gestor_err.imprime('Léxico', 'Tamaño de constante inválido, debe corresponder a un número de 16 bits',
-                                    token.lineno)
+                                    token.lineno)  # 108
             # print('Línea %d: Valor incorrecto, debe corresponder a un número de 16 bits' % self.lineno)
 
     @_(r"'.*'")
     def CADENA(self, token):
         if len(token.value) > 64:
             self.gestor_err.imprime('Léxico', 'Tamaño de cadena inválido, debe ser menor de 64 caracteres',
-                                    token.lineno)
+                                    token.lineno)  # 109
         token.value = u'"{cadena}"'.format(cadena=token.value[1:-1])
         token.value = re.sub(r"\\\'", "'", token.value)
         token.value = re.sub(r'\\\\', r'\\', token.value)
@@ -129,17 +126,15 @@ class JSLexer(Lexer):
         return token
 
     def IDENTIFICADOR(self, token):
-        token.index = token.value
         if self.gestor_ts.zona_decl:
             if self.gestor_ts.busca_ts_activa(token.value) is None:
                 token.value = self.gestor_ts.inserta_ts_activa(token.value)
             else:
                 token.value = None
-                self.gestor_err.imprime('Semántico', 'Ya existe el identificador a declarar', token.lineno)
+                self.gestor_err.imprime('Semántico', 'Ya existe el identificador a declarar', token.lineno)  # 107
         else:
             indice = self.gestor_ts.busca_ts(token.value)
             if indice is None:
-                print('no declarado', file=sys.stderr)
                 token.value = self.gestor_ts.inserta_ts_global(token.value)
                 self.gestor_ts.aniadir_var_atributos_ts_global(token.value, 'entero', 1)
             else:
@@ -226,11 +221,10 @@ class JSLexer(Lexer):
         print(token)
         t_error = self.gestor_err.error_lexico[token.value[0]]
         if t_error:
-            self.gestor_err.imprime('Léxico',t_error, token.lineno)
+            self.gestor_err.imprime('Léxico', t_error, token.lineno)
         else:
-            self.gestor_err.imprime('Léxico', 'Caracter erróneo %r' % token.value[0], token.lineno)
+            self.gestor_err.imprime('Léxico', 'Caracter erróneo %r' % token.value[0], token.lineno)  # 101
         self.index += 1
-
 
 
 if __name__ == '__main__':
@@ -242,6 +236,6 @@ if __name__ == '__main__':
     for token in lexer.tokenize(js_file.read()):
         token_file.write(f'<{token.type},{token.value}>\n')
 
-    ts.imprime_fichero()
+    ts.imprime()
     token_file.close()
     js_file.close()

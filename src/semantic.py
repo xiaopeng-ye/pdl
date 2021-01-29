@@ -9,6 +9,18 @@ class JSSemantic:
         self.gestor_err = gestor_err
         self.pila_aux = deque()
 
+    def regla_P1(self):  # P -> F P
+        self.pila_aux.pop()
+        self.pila_aux.pop()
+
+    def regla_P2(self):  # P -> S P y P -> B P
+        self.pila_aux.pop()
+        sb = self.pila_aux.pop()
+        if sb.ret != 'vacio':
+            self.gestor_err.imprime('Semántico',
+                                    "La sentencia 'return' solo es válida dentro de una función",
+                                    self.lexico.linea)  # 200
+
     def regla_F1(self):  # F -> function
         self.gestor_ts.zona_decl = True
 
@@ -20,7 +32,7 @@ class JSSemantic:
         a = self.pila_aux[-2]
         id_ = self.pila_aux[-4]
         h = self.pila_aux[-5]
-        self.gestor_ts.aniadir_funcion_ts(id_.pos, a.tipo, h.tipo)
+        self.gestor_ts.aniadir_func_atributos_ts(id_.pos, a.tipo, h.tipo)
         self.gestor_ts.zona_decl = False
 
     def regla_F4(self):  # F -> function H ID ( A ) { C
@@ -33,11 +45,12 @@ class JSSemantic:
             f.tipo = 'ok'
         else:
             f.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'El retorno de la función no coincide con el valor de return',
-                                    function.linea)
+            self.gestor_err.imprime('Semántico',
+                                    "El tipo de retorno de la función no coincide con el valor del 'return'",
+                                    function.linea)  # 201
+        self.gestor_ts.libera_tabla()
 
     def regla_F5(self):  # F -> function H ID ( A ) { C }
-        self.gestor_ts.libera_tabla()
         self.pila_aux.pop()
         self.pila_aux.pop()
         self.pila_aux.pop()
@@ -70,7 +83,9 @@ class JSSemantic:
             c.ret = b.ret
         else:
             c.ret = 'error'
-            self.gestor_err.imprime('Semántico', 'Tipo de retorno incorrecto', self.lexico.lineno)
+            self.gestor_err.imprime('Semántico',
+                                    "El tipo de retorno de la función no coincide con el valor del 'return'",
+                                    self.lexico.linea)  # 201
 
     def regla_C2(self):  # C -> lambda
         c = self.pila_aux[-1]
@@ -86,9 +101,8 @@ class JSSemantic:
             e.tipo = r.tipo
         else:
             e.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Los tipos los elementos de la expresión no coinciden',
-                                    self.lexico.lineno)
-        e.linea = r.linea
+            self.gestor_err.imprime('Semántico',
+                                    "El tipo de los operandos del operador '||' no coincide", self.lexico.linea)  # 202
 
     def regla_Y(self):  # Y -> || R Y1
         y1 = self.pila_aux.pop()
@@ -98,11 +112,11 @@ class JSSemantic:
 
         if r.tipo == 'logico' and (y1.tipo == 'logico' or y1.tipo == 'vacio'):
             y.tipo = 'logico'
-            y.linea = operador.linea
         else:
             y.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Se esperaba un tipo lógico', operador.linea)
-        y.linea = operador.linea
+            self.gestor_err.imprime('Semántico',
+                                    "Se esperaba un tipo lógico de los operandos del operador '||'",
+                                    operador.linea)  # 203
 
     def regla_R(self):  # R -> U I
         i = self.pila_aux.pop()
@@ -113,9 +127,8 @@ class JSSemantic:
             r.tipo = u.tipo
         else:
             r.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Los tipos de los elementos de la expresión no coinciden',
-                                    self.lexico.lineno)
-        r.linea = u.linea
+            self.gestor_err.imprime('Semántico',
+                                    "El tipo de los operandos del operador '&&' no coincide", self.lexico.linea)  # 204
 
     def regla_I(self):  # I -> && U I1
         i1 = self.pila_aux.pop()
@@ -125,11 +138,10 @@ class JSSemantic:
 
         if u.tipo == 'logico' and (i1.tipo == 'logico' or i1.tipo == 'vacio'):
             i.tipo = u.tipo
-            i.linea = and_.linea
         else:
             i.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Los tipos de los elementos de la expresión no coinciden', and_.linea)
-        i.linea = and_.linea
+            self.gestor_err.imprime('Semántico',
+                                    "Se esperaba un tipo lógico de los operandos del operador '&&'", and_.linea)  # 205
 
     def regla_U(self):  # U -> V O
         o = self.pila_aux.pop()
@@ -142,23 +154,23 @@ class JSSemantic:
             u.tipo = v.tipo
         else:
             u.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Los tipos de los elementos de la expresión no coinciden',
-                                    self.lexico.lineno)
-        u.linea = v.linea
+            self.gestor_err.imprime('Semántico',
+                                    "El tipo de los operandos del operador de relación no coincide",
+                                    self.lexico.linea)  # 206
 
-    def regla_O(self):  # O -> != V y O -> == V
+    def regla_O(self):  # O -> != V O y O -> == V O
+        o1 = self.pila_aux.pop()
         v = self.pila_aux.pop()
         comparacion = self.pila_aux.pop()
         o = self.pila_aux[-1]
 
-        if v.tipo in ['entero', 'cadena', 'logico']:
-            o.tipo = v.tipo
-            o.linea = comparacion.linea
+        if v.tipo == 'entero' and (o1.tipo == 'entero' or o1.tipo == 'vacio'):
+            o.tipo = 'entero'
         else:
             o.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Los tipos de los elementos de la expresión no coinciden',
-                                    comparacion.linea)
-        o.linea = comparacion.linea
+            self.gestor_err.imprime('Semántico',
+                                    'Se esperaba un tipo entero de los operandos del operador de relación',
+                                    comparacion.linea)  # 207
 
     def regla_V(self):  # V -> W J
         j = self.pila_aux.pop()
@@ -169,9 +181,9 @@ class JSSemantic:
             v.tipo = w.tipo
         else:
             v.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Los tipos de los elementos de la expresión no coinciden',
-                                    self.lexico.lineno)
-        v.linea = w.linea
+            self.gestor_err.imprime('Semántico',
+                                    "El tipo de los operandos del operador aritmético deben ser enteros",
+                                    self.lexico.linea)  # 208
 
     def regla_J(self):  # J -> + W J1  y J -> - W J1
         j1 = self.pila_aux.pop()
@@ -183,27 +195,27 @@ class JSSemantic:
             j.tipo = 'entero'
         else:
             j.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Se esperaba un tipo lógico', operador.linea)
-        j.linea = operador.linea
+            self.gestor_err.imprime('Semántico',
+                                    'Se esperaba un tipo entero de los operandos del operador aritmético',
+                                    operador.linea)  # 209
 
     def regla_W1(self):  # W -> ++ ID
         id_ = self.pila_aux.pop()
-        increm = self.pila_aux.pop()
+        self.pila_aux.pop()
         w = self.pila_aux[-1]
         if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'entero':
             w.tipo = 'entero'
         else:
             w.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Solo se puede auto incrementar variables de tipo entero', id_.linea)
-        w.linea = increm.linea
+            self.gestor_err.imprime('Semántico',
+                                    'Solo se puede auto incrementar variables de tipo entero', id_.linea)  # 210
 
     def regla_W2(self):  # W -> ( E )
         self.pila_aux.pop()
         e = self.pila_aux.pop()
-        parentesis = self.pila_aux.pop()
+        self.pila_aux.pop()
         w = self.pila_aux[-1]
         w.tipo = e.tipo
-        w.linea = parentesis.linea
 
     def regla_W3(self):  # W -> ID D
         d = self.pila_aux.pop()
@@ -211,38 +223,51 @@ class JSSemantic:
         w = self.pila_aux[-1]
 
         id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
-        if d.tipo == 'vacio' and id_simbolo['tipo']:
-            w.tipo = id_simbolo['tipo']
-        elif id_simbolo['tipoParam']:
-            w.tipo = id_simbolo['tipoRetorno']
+        if id_simbolo['tipo'] != 'funcion':
+            if d.tipo == 'ok':
+                w.tipo = id_simbolo['tipo']
+            else:
+                w.tipo = 'error'
+                self.gestor_err.imprime('Semántico',
+                                        f"El identificador '{id_simbolo.lexema}' corresponde a una variable",
+                                        id_.linea)  # 213
         else:
-            w.tipo = 'error'
-            # self.gestor_err.imprime('Semántico', 'No se que poner aqui', id_.linea)
-        w.linea = id_.linea
+            if id_simbolo['tipoParam'] == d.tipo:
+                w.tipo = id_simbolo['tipoRetorno']
+            elif d.tipo == 'ok':
+                w.tipo = 'error'
+                self.gestor_err.imprime('Semántico',
+                                        f"El identificador '{id_simbolo.lexema}' corresponde a una función",
+                                        id_.linea)  # 211
+            else:
+                w.tipo = 'error'
+                self.gestor_err.imprime('Semántico', 'Los tipos de los parámetros no coinciden', id_.linea)  # 212
 
     def regla_W4(self):  # W-> entero
-        entero = self.pila_aux.pop()
+        self.pila_aux.pop()
         w = self.pila_aux[-1]
         w.tipo = 'entero'
-        w.linea = entero.linea
 
     def regla_W5(self):  # W-> cadena
-        cadena = self.pila_aux.pop()
+        self.pila_aux.pop()
         w = self.pila_aux[-1]
         w.tipo = 'cadena'
-        w.linea = cadena.linea
 
     def regla_W6(self):  # W -> true | W -> false
-        boolean = self.pila_aux.pop()
+        self.pila_aux.pop()
         w = self.pila_aux[-1]
         w.tipo = 'logico'
-        w.linea = boolean.linea
 
-    def regla_D(self):  # D -> (L)  ##igual G2
+    def regla_D(self):  # D -> (L) igual G2
         self.pila_aux.pop()
         ll = self.pila_aux.pop()
         self.pila_aux.pop()
-        self.pila_aux[-1].tipo = ll.tipo
+        d = self.pila_aux[-1]
+        d.tipo = ll.tipo
+
+    def regla_D1(self):  # D -> lambda
+        d = self.pila_aux[-1]
+        d.tipo = 'ok'
 
     def regla_B1_1(self):  # B -> let
         self.gestor_ts.zona_decl = True
@@ -273,7 +298,7 @@ class JSSemantic:
             b.ret = s.ret
         else:
             b.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Expresión no válida', if_.linea)
+            self.gestor_err.imprime('Semántico', 'Se espera una expresión de tipo lógico', if_.linea)  # 214
 
     def regla_B3(self):  # B -> for (N;E;M) {C}
         self.pila_aux.pop()
@@ -294,7 +319,7 @@ class JSSemantic:
             b.ret = c.ret
         else:
             b.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Expresión no válida', for_.linea)
+            self.gestor_err.imprime('Semántico', 'Expresión no válida', for_.linea)  # 215
 
     def regla_N1(self):  # N -> ID = E
         e = self.pila_aux.pop()
@@ -306,7 +331,8 @@ class JSSemantic:
             n.tipo = 'ok'
         else:
             n.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'El tipo de valor asginado son incompatibles', id_.linea)
+            self.gestor_err.imprime('Semántico', 'El tipo de valor asignado es incompatible con el tipo de la variable',
+                                    id_.linea)  # 216
 
     def regla_N2(self):  # N -> lambda
         self.pila_aux[-1].tipo = 'ok'
@@ -325,7 +351,8 @@ class JSSemantic:
             m.tipo = 'ok'
         else:
             m.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Solo se puede auto incrementar variables de tipo entero', elem.linea)
+            self.gestor_err.imprime('Semántico', 'Solo se puede auto incrementar variables de tipo entero',
+                                    elem.linea)  # 210
 
     def regla_S1(self):  # S -> ID G ;
         self.pila_aux.pop()
@@ -334,18 +361,17 @@ class JSSemantic:
         s = self.pila_aux[-1]
 
         id_simbolo = self.gestor_ts.buscar_simbolo_ts(id_.pos)
-        print(id_simbolo.lexema, id_simbolo['tipo'], g.tipo)
         if id_simbolo['tipo'] == 'funcion':
             if id_simbolo['tipoParam'] == g.tipo:
                 s.tipo = 'ok'
             else:
                 s.tipo = 'error'
-                self.gestor_err.imprime('Semántico', 'Los tipos de los parámetros no coinciden', id_.linea)
+                self.gestor_err.imprime('Semántico', 'Los tipos de los parámetros no coinciden', id_.linea)  # 212
         elif id_simbolo['tipo'] == g.tipo:
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'El tipo de la variable no coincide', id_.linea)
+            self.gestor_err.imprime('Semántico', 'El tipo de la variable no coincide', id_.linea)  # 217
         s.ret = 'vacio'
 
     def regla_S2(self):  # S -> ++ ID ;
@@ -358,7 +384,8 @@ class JSSemantic:
             s.tipo = 'ok'
         else:
             s.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'Solo se puedo auto incrementar variables de tipo entero', id_.linea)
+            self.gestor_err.imprime('Semántico', 'Solo se puede auto incrementar variables de tipo entero',
+                                    id_.linea)  # 210
         s.ret = 'vacio'
 
     def regla_G1(self):  # G -> = E
@@ -384,7 +411,7 @@ class JSSemantic:
 
         if self.gestor_ts.buscar_simbolo_ts(id_.pos)['tipo'] == 'logico':
             s.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'No se admite una variable de tipo lógico', id_.linea)
+            self.gestor_err.imprime('Semántico', 'No se admite una variable de tipo lógico', id_.linea)  # 218
         else:
             s.tipo = 'ok'
         s.ret = 'vacio'
@@ -399,7 +426,7 @@ class JSSemantic:
 
         if e.tipo == 'logico':
             s.tipo = 'error'
-            self.gestor_err.imprime('Semántico', 'No se admite una expresión de tipo lógico', alert.linea)
+            self.gestor_err.imprime('Semántico', 'No se admite una expresión de tipo lógico', alert.linea)  # 219
         else:
             s.tipo = 'ok'
         s.ret = 'vacio'
